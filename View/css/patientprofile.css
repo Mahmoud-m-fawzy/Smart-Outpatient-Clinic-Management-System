@@ -1,0 +1,147 @@
+body {
+    background: #f4f8fb;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.profile-header {
+    background: linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%);
+    color: white;
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 24px rgba(30, 58, 138, 0.12);
+    background-size: 200% 200%;
+    animation: gradientMove 8s ease-in-out infinite;
+}
+
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.profile-card {
+    border-radius: 12px;
+    box-shadow: 0 2px 16px rgba(37, 99, 235, 0.08);
+    margin-bottom: 1.5rem;
+    border: 1px solid #e0e7ef;
+    background: #fff;
+    transition: transform 0.18s cubic-bezier(.4,2,.6,1), box-shadow 0.18s cubic-bezier(.4,2,.6,1);
+}
+.profile-card:hover {
+    transform: translateY(-6px) scale(1.015);
+    box-shadow: 0 8px 32px rgba(37, 99, 235, 0.16);
+    border-color: #2563eb33;
+}
+
+.profile-image {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 5px solid #2563eb;
+    object-fit: cover;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.10);
+    transition: transform 0.18s cubic-bezier(.4,2,.6,1), box-shadow 0.18s cubic-bezier(.4,2,.6,1);
+}
+.profile-image:hover {
+    transform: scale(1.05) rotate(-2deg);
+    box-shadow: 0 8px 32px rgba(37, 99, 235, 0.18);
+}
+
+.info-label {
+    font-weight: 600;
+    color: #2563eb;
+    letter-spacing: 0.5px;
+}
+
+.medical-history-item {
+    border-left: 3px solid #2563eb;
+    padding-left: 1rem;
+    margin-bottom: 1rem;
+    background: #f0f6ff;
+    border-radius: 6px;
+}
+
+.card-header.bg-primary,
+.card-header.bg-success,
+.card-header.bg-info {
+    background: linear-gradient(90deg, #2563eb 0%, #1e40af 100%) !important;
+    color: #fff !important;
+    border-bottom: none;
+}
+
+.btn-outline-primary, .btn-outline-success, .btn-outline-warning {
+    transition: box-shadow 0.18s cubic-bezier(.4,2,.6,1), background 0.18s, color 0.18s;
+}
+.btn-outline-primary:hover, .btn-outline-primary:focus,
+.btn-outline-success:hover, .btn-outline-success:focus,
+.btn-outline-warning:hover, .btn-outline-warning:focus {
+    box-shadow: 0 0 0 4px #2563eb33;
+    z-index: 1;
+}
+
+.btn-outline-primary {
+    border-color: #2563eb;
+    color: #2563eb;
+}
+.btn-outline-success {
+    border-color: #1e40af;
+    color: #1e40af;
+}
+.btn-outline-warning {
+    border-color: #60a5fa;
+    color: #2563eb;
+}
+
+.badge.bg-primary {
+    background: #2563eb !important;
+}
+
+.list-group-item {
+    border: none;
+    background: #f8fafc;
+}
+
+input.form-control {
+    border: 1.5px solid #2563eb;
+    border-radius: 6px;
+    box-shadow: none;
+}
+input.form-control:focus {
+    border-color: #1e40af;
+    box-shadow: 0 0 0 2px #2563eb33;
+}
+
+/* Additional responsive styles */
+@media (max-width: 768px) {
+    .profile-header {
+        padding: 1rem 0;
+    }
+    
+    .profile-image {
+        width: 120px;
+        height: 120px;
+        margin-bottom: 1rem;
+    }
+    
+    .profile-card {
+        margin-bottom: 1rem;
+    }
+}
+
+.clinic-logo {
+    max-width: 80px;
+    max-height: 80px;
+    width: 100%;
+    height: auto;
+    border-radius: 50%;
+    background: transparent !important;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.10);
+    border: 2px solid #2563eb;
+    object-fit: contain;
+    transition: box-shadow 0.18s cubic-bezier(.4,2,.6,1), transform 0.18s cubic-bezier(.4,2,.6,1);
+    display: block;
+}
+.clinic-logo:hover {
+    box-shadow: 0 8px 32px rgba(37, 99, 235, 0.18);
+    transform: scale(1.04) rotate(-2deg);
+}
