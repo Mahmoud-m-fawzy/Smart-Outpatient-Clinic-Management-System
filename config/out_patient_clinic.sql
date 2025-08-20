@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: May 30, 2025 at 08:46 PM
+-- Generation Time: Jul 04, 2025 at 02:35 PM
 -- Server version: 9.1.0
 -- PHP Version: 8.3.14
 
@@ -39,48 +39,37 @@ CREATE TABLE IF NOT EXISTS `appointment` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `day_of_week` varchar(20) DEFAULT NULL,
   `appointment_time` time DEFAULT NULL,
-  `reminder_sent` tinyint(1) NOT NULL DEFAULT '0',
-  `confirmation_sent_at` datetime DEFAULT NULL,
-  `reminder_sent_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `patient_id` (`patient_id`),
   KEY `doctor_id` (`doctor_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `appointment`
 --
 
-INSERT INTO `appointment` (`id`, `patient_id`, `doctor_id`, `visit_type`, `location`, `notes`, `status`, `created_at`, `day_of_week`, `appointment_time`, `reminder_sent`, `confirmation_sent_at`, `reminder_sent_at`) VALUES
-(1, 1, 1, 'Consultation', 'Clinic A', 'Follow-up required', 'Scheduled', '2025-05-16 22:00:59', 'Tuesday', '10:00:00', 0, NULL, NULL),
-(2, 1, 1, '', 'Clinic A', 'Initial consultation for cardiology', 'Scheduled', '2025-05-19 09:00:00', 'Sunday', '08:00:00', 0, NULL, NULL),
-(3, 4, 1, 'Consultation', NULL, NULL, 'Scheduled', '2025-05-19 12:27:50', 'Tuesday', '13:00:00', 0, NULL, NULL),
-(4, 4, 1, 'Consultation', NULL, NULL, 'Scheduled', '2025-05-19 12:34:41', 'Tuesday', '13:00:00', 0, NULL, NULL),
-(5, 4, 1, 'Consultation', NULL, NULL, 'Scheduled', '2025-05-19 12:43:25', 'Tuesday', '13:00:00', 0, NULL, NULL),
-(6, 4, 1, 'Consultation', NULL, NULL, 'Scheduled', '2025-05-19 13:11:01', 'Tuesday', '14:00:00', 0, NULL, NULL),
-(7, 4, 1, 'Consultation', NULL, NULL, 'Scheduled', '2025-05-19 14:05:33', 'Tuesday', NULL, 0, NULL, NULL),
-(8, 4, 1, 'Consultation', NULL, NULL, 'Scheduled', '2025-05-19 14:05:37', 'Tuesday', NULL, 0, NULL, NULL),
-(9, 4, 1, 'Consultation', NULL, NULL, 'Scheduled', '2025-05-19 14:07:47', 'Tuesday', NULL, 0, NULL, NULL),
-(10, 4, 1, 'Consultation', NULL, NULL, 'Scheduled', '2025-05-19 14:10:40', 'Tuesday', NULL, 0, NULL, NULL),
-(11, 4, 1, 'Consultation', NULL, NULL, 'Scheduled', '2025-05-19 14:10:58', 'Sunday', NULL, 0, NULL, NULL),
-(12, 4, 1, 'Consultation', NULL, NULL, 'Scheduled', '2025-05-19 14:12:45', 'Sunday', NULL, 0, NULL, NULL),
-(13, 4, 1, 'Consultation', NULL, NULL, 'Scheduled', '2025-05-19 14:15:16', 'Thursday', NULL, 0, NULL, NULL),
-(14, 4, 1, 'Consultation', 'Clinic', NULL, 'Scheduled', '2025-05-19 21:26:14', 'Sunday', '11:00:00', 0, NULL, NULL),
-(15, 4, 1, 'Consultation', 'Clinic', NULL, 'Scheduled', '2025-05-19 21:26:52', 'Tuesday', '03:00:00', 0, NULL, NULL),
-(16, 4, 1, 'Consultation', 'Clinic', NULL, 'Scheduled', '2025-05-19 21:27:34', 'Tuesday', '03:00:00', 0, NULL, NULL),
-(17, 4, 1, 'Consultation', 'Clinic', NULL, 'Scheduled', '2025-05-19 21:34:16', 'Tuesday', '03:00:00', 0, NULL, NULL),
-(18, 4, 1, 'Consultation', NULL, NULL, 'Scheduled', '2025-05-19 23:37:39', 'Tuesday', '13:00:00', 0, NULL, NULL),
-(19, 4, 1, 'Consultation', NULL, NULL, 'Scheduled', '2025-05-19 23:58:48', 'Sunday', '11:00:00', 0, NULL, NULL),
-(20, 4, 3, 'Consultation', NULL, NULL, 'Scheduled', '2025-05-20 00:06:31', 'Monday', '10:00:00', 0, NULL, NULL),
-(21, 4, 3, 'Consultation', NULL, NULL, 'Scheduled', '2025-05-20 00:10:37', 'Wednesday', '09:00:00', 0, NULL, NULL),
-(22, 4, 1, 'Consultation', 'Clinic A', 'Emergency hours', 'Scheduled', '2025-05-20 00:14:19', 'Thursday', '10:00:00', 0, NULL, NULL),
-(23, 4, 1, 'Consultation', 'Clinic A', 'Cardiology Checkup', 'Scheduled', '2025-05-20 00:16:27', 'Sunday', '08:00:00', 0, NULL, NULL),
-(24, 4, 1, 'Consultation', 'Clinic A', 'Cardiology Checkup', 'Scheduled', '2025-05-21 17:33:52', 'Sunday', '08:00:00', 0, NULL, NULL),
-(25, 4, 3, 'Consultation', 'Clinic C', 'Heart patients only', 'Scheduled', '2025-05-21 20:26:05', 'Monday', '08:00:00', 0, NULL, NULL),
-(26, 4, 1, 'Consultation', 'Clinic A', 'Cardiology Checkup', 'Scheduled', '2025-05-21 21:47:02', 'Sunday', '08:00:00', 0, NULL, NULL),
-(27, 4, 3, 'Consultation', 'Clinic A', 'ECG Sessions', 'Scheduled', '2025-05-22 06:38:32', 'Wednesday', '09:00:00', 0, NULL, NULL),
-(28, 4, 1, 'Consultation', 'Clinic A', 'Emergency hours', 'Scheduled', '2025-05-26 00:37:16', 'Thursday', '10:00:00', 0, NULL, NULL),
-(29, 4, 1, 'Consultation', 'Clinic A', 'Cardiology Checkup', 'Scheduled', '2025-05-27 10:38:03', 'Sunday', '08:00:00', 0, NULL, NULL);
+INSERT INTO `appointment` (`id`, `patient_id`, `doctor_id`, `visit_type`, `location`, `notes`, `status`, `created_at`, `day_of_week`, `appointment_time`) VALUES
+(26, 4, 1, 'Consultation', 'Clinic A', 'Regular checkup', 'Scheduled', '2025-07-04 14:21:06', 'Friday', '09:00:00'),
+(25, 4, 7, 'Consultation', 'Clinic C', 'Free appointment booking', 'Scheduled', '2025-07-04 03:03:14', 'Wensday', '00:07:50'),
+(24, 4, 5, 'Consultation', 'Clinic C', 'Free appointment booking', 'Scheduled', '2025-07-04 02:54:14', 'Tuesday', '11:00:00'),
+(12, 4, 3, 'Consultation', 'Clinic C', 'Free appointment booking', 'Scheduled', '2025-06-25 02:40:03', 'Sunday', '08:00:00');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `chat_messages`
+--
+
+DROP TABLE IF EXISTS `chat_messages`;
+CREATE TABLE IF NOT EXISTS `chat_messages` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `appointment_id` int NOT NULL,
+  `sender_type` enum('doctor','patient') NOT NULL,
+  `message` text NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `appointment_id` (`appointment_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -113,9 +102,9 @@ CREATE TABLE IF NOT EXISTS `doctor` (
 --
 
 INSERT INTO `doctor` (`id`, `ID_NUMBER`, `FN`, `LN`, `email`, `phone`, `password`, `plain_password`, `title`, `specialty`, `gender`, `flag_login`, `photo`) VALUES
-(1, 'Ihf001', 'Safi', '', 'safaa.cardiology1@example.com', '01000111111', '$2y$10$5Pk4oscDdRNvP/.KvDn2ZeFIehvcEHWFzwtFlLe0MlhevWj8c0otu', '123', 'Dr.', 'Cardiology', 'Male', 1, ''),
+(1, 'Ihf001', 'Safi', '', 'safaa.cardiology1@example.com', '01000111111', '$2y$10$5Pk4oscDdRNvP/.KvDn2ZeFIehvcEHWFzwtFlLe0MlhevWj8c0otu', '123', 'Dr.', 'Cardiology', 'Male', 1, 'D:\\wamp64\\www\\MVC\\uploads\\doctors\\11.jpg'),
 (2, 'Ihf002', 'Mai', '', 'mai.cardiology2@example.com', '01000222222', 'pass', 'pass', 'Dr.', 'Cardiology', 'Female', 0, 'D:\\wamp64\\www\\MVC\\uploads\\doctors\\11.jpg'),
-(3, 'Ihf003', 'Sara', '', 'sara.cardiology3@example.com', '01000333333', 'pass', 'pass', 'Dr.', 'Cardiology', 'Female', 0, ''),
+(3, 'Ihf003', 'Sara', '', 'sara.cardiology3@example.com', '01000333333', '$2y$10$5Pk4oscDdRNvP/.KvDn2ZeFIehvcEHWFzwtFlLe0MlhevWj8c0otu', 'pass', 'Dr.', 'Cardiology', 'Female', 1, 'D:\\wamp64\\www\\MVC\\uploads\\doctors\\11.jpg'),
 (4, 'Ihf004', 'Asmaa', '', 'asmaa.derma1@example.com', '01000444444', 'pass', 'pass', 'Dr.', 'Dermatology', 'Female', 0, ''),
 (5, 'Ihf005', 'Mohamed', 'Yehia', 'mohamed.derma2@example.com', '01000555555', 'pass', 'pass', 'Dr.', 'Dermatology', 'Male', 0, ''),
 (6, 'Ihf006', 'Omnia', 'Saeed', 'omina.derma3@example.com', '01000666666', 'pass', 'pass', 'Dr.', 'Dermatology', 'Female', 0, ''),
@@ -174,30 +163,102 @@ CREATE TABLE IF NOT EXISTS `doctor_schedule` (
   `location` varchar(255) DEFAULT NULL,
   `notes` text,
   `availability` enum('Available','Unavailable') NOT NULL DEFAULT 'Available',
+  `slot_fee` decimal(10,2) DEFAULT '0.00',
   PRIMARY KEY (`id`),
   KEY `doctor_id` (`doctor_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `doctor_schedule`
 --
 
-INSERT INTO `doctor_schedule` (`id`, `doctor_id`, `day_of_week`, `start_time`, `end_time`, `location`, `notes`, `availability`) VALUES
-(1, 1, 'Sunday', '08:00:00', '11:00:00', 'Clinic A', 'Cardiology Checkup', 'Unavailable'),
-(2, 1, 'Tuesday', '13:00:00', '15:00:00', 'Clinic B', 'Cardiology Follow-up', ''),
-(3, 1, 'Thursday', '10:00:00', '12:00:00', 'Clinic A', 'Emergency hours', 'Available'),
-(4, 3, 'Monday', '08:00:00', '10:00:00', 'Clinic C', 'Heart patients only', 'Available'),
-(5, 3, 'Wednesday', '09:00:00', '11:00:00', 'Clinic A', 'ECG Sessions', 'Unavailable'),
-(6, 3, 'Friday', '12:00:00', '14:00:00', 'Clinic B', 'Consultation', 'Available'),
-(7, 5, 'Tuesday', '10:00:00', '12:00:00', 'Skin Center', 'Acne treatment', 'Available'),
-(8, 5, 'Thursday', '14:00:00', '16:00:00', 'Skin Center', 'Laser clinic', 'Available'),
-(9, 5, 'Saturday', '09:00:00', '11:00:00', 'Branch D', 'Follow-up', 'Available'),
-(10, 7, 'Monday', '10:00:00', '12:00:00', 'Kids Clinic', 'General Pediatrics', 'Available'),
-(11, 7, 'Wednesday', '13:00:00', '15:00:00', 'Main Hospital', 'Vaccination Day', 'Available'),
-(12, 7, 'Friday', '08:00:00', '10:00:00', 'Kids Clinic', 'Newborn Check', 'Available'),
-(13, 9, 'Sunday', '09:30:00', '11:30:00', 'Branch C', 'Checkups', 'Available'),
-(14, 9, 'Tuesday', '11:00:00', '13:00:00', 'Main Hospital', 'Emergency slots', 'Available'),
-(15, 9, 'Thursday', '12:00:00', '14:00:00', 'Clinic D', 'Follow-up', 'Available');
+INSERT INTO `doctor_schedule` (`id`, `doctor_id`, `day_of_week`, `start_time`, `end_time`, `location`, `notes`, `availability`, `slot_fee`) VALUES
+(1, 1, 'Sunday', '08:00:00', '11:00:00', 'Clinic A', 'Cardiology Checkup', 'Unavailable', 200.00),
+(2, 1, 'Monday', '13:00:00', '15:00:00', 'Clinic B', 'Cardiology Follow-up', 'Unavailable', 0.00),
+(3, 1, 'Thursday', '10:00:00', '11:00:00', 'Clinic C', 'Emergency hours', 'Available', 100.00),
+(4, 3, 'Sunday', '08:00:00', '10:00:00', 'Clinic D', 'Heart patients only', 'Unavailable', 0.00),
+(5, 3, 'Sunday', '09:00:00', '11:00:00', 'Clinic A', 'ECG Sessions', 'Available', 0.00),
+(6, 3, 'Friday', '12:00:00', '14:00:00', 'Clinic B', 'Consultation', 'Available', 0.00),
+(7, 5, 'Tuesday', '10:00:00', '12:00:00', 'Clinic C', 'Acne treatment', 'Unavailable', 0.00),
+(8, 5, 'Thursday', '14:00:00', '16:00:00', 'Clinic D', 'Laser clinic', 'Available', 0.00),
+(9, 5, 'Saturday', '09:00:00', '11:00:00', 'Clinic A', 'Follow-up', 'Available', 100.00),
+(10, 7, 'Monday', '10:00:00', '12:00:00', 'Clinic B', 'General Pediatrics', 'Available', 0.00),
+(11, 7, 'Wednesday', '13:00:00', '15:00:00', 'Clinic C', 'Vaccination Day', 'Unavailable', 0.00),
+(12, 7, 'Friday', '08:00:00', '10:00:00', 'Clinic D', 'Newborn Check', 'Available', 0.00),
+(13, 9, 'Sunday', '09:30:00', '11:30:00', 'Clinic A', 'Checkups', 'Unavailable', 0.00),
+(14, 9, 'Tuesday', '11:00:00', '13:00:00', 'Clinic B', 'Emergency slots', 'Available', 0.00),
+(15, 9, 'Thursday', '12:00:00', '14:00:00', 'Clinic C', 'Follow-up', 'Available', 0.00),
+(16, 11, 'Sunday', '15:40:00', '16:40:00', 'Clinic D', 'ana', 'Available', 0.00),
+(17, 1, 'Friday', '09:00:00', '17:00:00', 'Clinic A', 'Full day consultation', 'Available', 250.00),
+(19, 12, 'Tuesday', '08:00:00', '09:00:00', 'Clinic A', '', 'Unavailable', 0.00),
+(20, 1, 'Friday', '09:00:00', '11:00:00', 'Clinic A', 'Full day consultation', 'Unavailable', 250.00);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `inventory_consumption`
+--
+
+DROP TABLE IF EXISTS `inventory_consumption`;
+CREATE TABLE IF NOT EXISTS `inventory_consumption` (
+  `ID` int NOT NULL AUTO_INCREMENT,
+  `ItemName` varchar(255) DEFAULT NULL,
+  `Quantity` int DEFAULT NULL,
+  `ConsumeDate` date DEFAULT NULL,
+  `DoctorID` int DEFAULT NULL,
+  `Notes` text,
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `inventory_consumption`
+--
+
+INSERT INTO `inventory_consumption` (`ID`, `ItemName`, `Quantity`, `ConsumeDate`, `DoctorID`, `Notes`) VALUES
+(1, 'Gauze Pads', 100, '2025-06-11', 101, 'Used in ER'),
+(2, 'Gloves', 300, '2025-06-12', 102, 'Daily rounds'),
+(3, 'Face Masks', 500, '2025-06-12', 103, 'Distributed to staff'),
+(4, 'Syringes', 120, '2025-06-13', 104, ''),
+(5, 'IV Bags', 50, '2025-06-13', 105, 'Used for dehydration cases'),
+(6, 'Alcohol Swabs', 150, '2025-06-14', 101, ''),
+(7, 'Bandages', 200, '2025-06-14', 102, 'Post-operation dressing'),
+(8, 'Thermometers', 10, '2025-06-15', 103, 'Room distribution'),
+(9, 'Cotton Rolls', 80, '2025-06-15', 104, ''),
+(10, 'Surgical Blades', 30, '2025-06-16', 105, 'Minor surgeries');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `inventory_receipts`
+--
+
+DROP TABLE IF EXISTS `inventory_receipts`;
+CREATE TABLE IF NOT EXISTS `inventory_receipts` (
+  `ID` int NOT NULL AUTO_INCREMENT,
+  `ItemName` varchar(255) DEFAULT NULL,
+  `Quantity` int DEFAULT NULL,
+  `IssueDate` date DEFAULT NULL,
+  `EndDate` date DEFAULT NULL,
+  `ReceptionID` int DEFAULT NULL,
+  `Notes` text,
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `inventory_receipts`
+--
+
+INSERT INTO `inventory_receipts` (`ID`, `ItemName`, `Quantity`, `IssueDate`, `EndDate`, `ReceptionID`, `Notes`) VALUES
+(1, 'Gauze Pads', 500, '2025-06-01', '2025-12-01', 1, 'Used in surgery rooms'),
+(2, 'Gloves', 1000, '2025-06-02', '2025-11-30', 2, 'Sterile gloves'),
+(3, 'Face Masks', 2000, '2025-06-03', '2025-12-31', 3, 'N95 masks'),
+(4, 'Syringes', 300, '2025-06-04', '2025-12-15', 1, 'Disposable syringes'),
+(5, 'IV Bags', 150, '2025-06-05', '2025-12-20', 2, '500ml saline solution'),
+(6, 'Alcohol Swabs', 400, '2025-06-06', '2025-11-25', 4, ''),
+(7, 'Bandages', 600, '2025-06-07', '2025-12-10', 3, 'Various sizes'),
+(8, 'Thermometers', 50, '2025-06-08', '2026-06-08', 1, 'Digital'),
+(9, 'Cotton Rolls', 200, '2025-06-09', '2026-01-15', 4, 'For wound dressing'),
+(10, 'Surgical Blades', 100, '2025-06-10', '2025-12-30', 2, 'Size 10 and 11');
 
 -- --------------------------------------------------------
 
@@ -224,7 +285,7 @@ CREATE TABLE IF NOT EXISTS `manager` (
 --
 
 INSERT INTO `manager` (`id`, `username`, `password`, `first_name`, `last_name`, `phone`, `email`, `flag_login`) VALUES
-(1, 'MGR500', 'PT123', 'safy', NULL, NULL, NULL, 0);
+(1, 'MGR500', '$2y$10$6OQGCr7lkxf4E1NBOpPgS.pW1.PtjzRRzZ1vi244aI4RG1go8zl4.', 'safy', NULL, NULL, NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -282,10 +343,11 @@ CREATE TABLE IF NOT EXISTS `patient` (
 --
 
 INSERT INTO `patient` (`id`, `FN`, `LN`, `email`, `phone`, `password`, `age`, `idnumber`, `NN`, `address`, `job`, `gender`, `marital`, `flag_login`, `plain_password`, `photo`) VALUES
-(1, 'Mahmoud', 'Fawzy', 'mf242095@gmail.com', '01018146088', '$2y$10$TJ6bso4xQhsJO6gOrdqP.ehURtlg9FixDzj.8nJwS9btNWqVaXHaK', 21, '241805', NULL, 'Egypt', 'studet', 'male', 'single', 0, 'Mahmoud1282005', NULL),
+(1, 'Mahmoud', 'Fawzy', 'mf242095@gmail.com', '10', '$2y$10$TJ6bso4xQhsJO6gOrdqP.ehURtlg9FixDzj.8nJwS9btNWqVaXHaK', 21, '241805', NULL, 'Egypt', 'studet', 'male', 'single', 0, 'Mahmoud1282005', ''),
 (2, 'Body', 'Taha', 'mahmoud.mohamed114@msa.edu.eg', '01207703807', '$2y$10$UFU6JrwO5ZWZsmFNUZw0HOwmpSrneSdOV0eNc9GVxVYaDeJd7.leO', 20, NULL, '3030383827232', 'octoper', 'studet', 'male', 'single', 1, 'body12082005', NULL),
 (3, 'ali', 'ahmed', 'ali@gmail.com', '01111111111', '$2y$10$IxNJc1uZwXMQ2H8NoO0DN.Ad2qwRolY5A.ydBmWRj08NI8uk4Fn5O', 19, '248971', NULL, 'octoper', 'studet', 'female', 'married', 0, 'mahmoudfawzy2022', NULL),
-(4, 'Youssif', 'Mohamed', 'mohamed@gmail.com', '01207766607', '$2y$10$3blwHA.LL.dPMM.HIGeDJ.Xz3qAI416/VsTEJ1RTTe4F6D.1Q7BFa', 19, '2222', NULL, 'Egypthhhhhhhhhhhh', 'studet', 'male', 'single', 1, 'Ihf12082005', NULL);
+(4, 'Youssif', 'Mohamed', 'mohamed@gmail.com', '01018146088', '$2y$10$3blwHA.LL.dPMM.HIGeDJ.Xz3qAI416/VsTEJ1RTTe4F6D.1Q7BFa', 19, '2222', NULL, 'as', 'JOP', 'male', 'single', 0, 'Ihf12082005', 'D:\\wamp64\\www\\MVC\\uploads\\doctors\\11.jpg'),
+(9, 'wahed', 'tany', NULL, '01018146099', '$2y$10$D52LQDJCNF5TvGmibYNEyeXjU9l8PTa.Sj29Va0lqOCFJC2KINQ6W', 110, '4444', '', 'tt', '', 'male', 'single', 0, '01018146099', NULL);
 
 -- --------------------------------------------------------
 
@@ -315,7 +377,68 @@ CREATE TABLE IF NOT EXISTS `staff` (
 INSERT INTO `staff` (`id`, `ID_NUMBER`, `password`, `FN`, `LN`, `role`, `phone`, `email`, `flag_login`) VALUES
 (1, 'STAFF001', '$2y$10$d2UjsGojF2spJGyGhs1LC.vBZgEUdLiLj75mOrR25bhIFWoeOOnQS', 'Youssif', 'Moahmed ', 'Receptionist', '01000111111', 'safaa.reception1@example.com', 1),
 (2, 'STAFF002', '$2y$10$.F2zSiMIcpWVVhV1fPRaie3yU1LRyBI.3tr2C93IPuxAVlc209Qj.', 'Mai', '', 'Receptionist', '01000222222', 'mai.reception2@example.com', 1),
-(3, 'STAFF003', '123', 'Sara', '', 'Receptionist', '01000333333', 'sara.reception3@example.com', 0);
+(3, 'STAFF003', '$2y$10$jFmjYANMNRTU51XUHZ6/5O1k8pq2qjKGbGcrWdbW1Y8pmgQ9rOysG', 'Sara', '', 'Receptionist', '01000333333', 'sara.reception3@example.com', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `treatment_plans`
+--
+
+DROP TABLE IF EXISTS `treatment_plans`;
+CREATE TABLE IF NOT EXISTS `treatment_plans` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `patient_id` int NOT NULL,
+  `appointment_id` int NOT NULL,
+  `diagnosis` text,
+  `duration` varchar(50) DEFAULT NULL,
+  `total_sessions` int DEFAULT NULL,
+  `notes` text,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `patient_id` (`patient_id`),
+  KEY `appointment_id` (`appointment_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `treatment_plans`
+--
+
+INSERT INTO `treatment_plans` (`id`, `patient_id`, `appointment_id`, `diagnosis`, `duration`, `total_sessions`, `notes`, `created_at`, `updated_at`) VALUES
+(1, 4, 12, 'Lower back pain with sciatica', '8 weeks', 5, 'Patient showing good progress with physical therapy exercises. Pain level reduced from 8/10 to 5/10.', '2025-06-25 02:41:46', '2025-06-25 03:05:12'),
+(3, 4, 16, '', '4 weeks', 1, '', '2025-06-29 03:04:10', '2025-06-29 03:04:10');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `treatment_sessions`
+--
+
+DROP TABLE IF EXISTS `treatment_sessions`;
+CREATE TABLE IF NOT EXISTS `treatment_sessions` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `treatment_plan_id` int NOT NULL,
+  `session_number` int NOT NULL,
+  `session_date` date NOT NULL,
+  `notes` text,
+  `status` enum('scheduled','completed','cancelled','no_show') DEFAULT 'scheduled',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `treatment_plan_id` (`treatment_plan_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `treatment_sessions`
+--
+
+INSERT INTO `treatment_sessions` (`id`, `treatment_plan_id`, `session_number`, `session_date`, `notes`, `status`, `created_at`, `updated_at`) VALUES
+(7, 1, 3, '2024-01-15', 'Advanced stretching and mobility exercises', 'completed', '2025-06-25 02:41:58', '2025-06-25 02:41:58'),
+(6, 1, 2, '2024-01-08', 'Core strengthening exercises and heat therapy', 'completed', '2025-06-25 02:41:58', '2025-06-25 02:41:58'),
+(5, 1, 1, '2024-01-01', 'Initial assessment and gentle stretching exercises', 'completed', '2025-06-25 02:41:58', '2025-06-25 02:41:58'),
+(8, 1, 4, '2024-01-22', 'Strength training and posture correction', 'scheduled', '2025-06-25 02:41:58', '2025-06-25 02:41:58'),
+(9, 1, 5, '2024-01-29', 'Balance training and posture review', 'scheduled', '2025-06-25 02:41:58', '2025-06-25 02:41:58');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

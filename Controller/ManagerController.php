@@ -31,6 +31,229 @@ class ManagerController {
     }
 
     /**
+     * Get report data for the manager dashboard
+     * @param string $reportType Type of report to generate
+     * @param string $startDate Start date for the report (Y-m-d)
+     * @param string $endDate End date for the report (Y-m-d)
+     * @return array Report data including statistics and recent appointments
+     */
+    public static function getReportData($reportType = 'overview', $startDate = null, $endDate = null) {
+        self::startSecureSession();
+        
+        // Check if user is logged in as manager
+        if (!isset($_SESSION['user_type']) || $_SESSION['user_type'] !== 'manager') {
+            return ['error' => 'Unauthorized access'];
+        }
+        
+        // Set default date range if not provided
+        if ($startDate === null) {
+            $startDate = date('Y-m-01'); // First day of current month
+        }
+        if ($endDate === null) {
+            $endDate = date('Y-m-t'); // Last day of current month
+        }
+        
+        // Validate dates
+        if (!self::validateDate($startDate) || !self::validateDate($endDate)) {
+            return ['error' => 'Invalid date format. Use YYYY-MM-DD.'];
+        }
+        
+        $manager = new Manager();
+        $link = $manager->getLink();
+        
+        // Initialize report data array with default values
+        $reportData = [
+            'title' => ucfirst($reportType) . ' Report',
+            'date_range' => [
+                'start' => $startDate,
+                'end' => $endDate
+            ],
+            'generated_at' => date('Y-m-d H:i:s'),
+            'stats' => [
+                'total_appointments' => 0,
+                'completed_appointments' => 0,
+                'pending_appointments' => 0,
+                'cancelled_appointments' => 0,
+                'total_revenue' => 0,
+                'total_patients' => 0,
+                'total_doctors' => 0,
+                'total_staff' => 0
+            ],
+            'recent_appointments' => [],
+            'appointments_by_date' => [],
+            'revenue_by_service' => []
+        ];
+        
+        try {
+            // Get basic statistics
+            $reportData['stats'] = [
+                'total_appointments' => $manager->getTotalAppointments(),
+                'completed_appointments' => $manager->getCompletedAppointments(),
+                'pending_appointments' => $manager->getPendingAppointments(),
+                'cancelled_appointments' => $manager->getCancelledAppointments(),
+                'total_revenue' => $manager->getTotalRevenue(),
+                'total_patients' => $manager->getTotalPatients(),
+                'total_doctors' => $manager->getTotalDoctors(),
+                'total_staff' => $manager->getTotalStaff()
+            ];
+            
+            // Check if appointment table exists
+            $appointmentTableExists = mysqli_query($link, "SHOW TABLES LIKE 'appointment'");
+            if (mysqli_num_rows($appointmentTableExists) > 0) {
+                // Get recent appointments (last 10)
+                $patientTableExists = mysqli_query($link, "SHOW TABLES LIKE 'patient'");
+                $doctorTableExists = mysqli_query($link, "SHOW TABLES LIKE 'doctor'");
+                
+                // Build the query based on available tables and columns
+                $selectFields = ["a.*"];
+                $joins = [];
+                
+                // Handle patient name fields
+                if (mysqli_num_rows($patientTableExists) > 0) {
+                    $patientCols = [];
+                    $cols = mysqli_query($link, "SHOW COLUMNS FROM patient");
+                    while ($col = mysqli_fetch_assoc($cols)) {
+                        $patientCols[] = $col['Field'];
+                    }
+                    
+                    if (in_array('FN', $patientCols) && in_array('LN', $patientCols)) {
+                        $selectFields[] = "p.FN as patient_first_name";
+                        $selectFields[] = "p.LN as patient_last_name";
+                        $joins[] = "LEFT JOIN patient p ON a.patient_id = p.patient_id";
+                    } else {
+                        $selectFields[] = "'' as patient_first_name";
+                        $selectFields[] = "'' as patient_last_name";
+                    }
+                } else {
+                    $selectFields[] = "'' as patient_first_name";
+                    $selectFields[] = "'' as patient_last_name";
+                }
+                
+                // Handle doctor name fields
+                if (mysqli_num_rows($doctorTableExists) > 0) {
+                    $doctorCols = [];
+                    $cols = mysqli_query($link, "SHOW COLUMNS FROM doctor");
+                    while ($col = mysqli_fetch_assoc($cols)) {
+                        $doctorCols[] = $col['Field'];
+                    }
+                    
+                    if (in_array('FN', $doctorCols) && in_array('LN', $doctorCols)) {
+                        $selectFields[] = "d.FN as doctor_first_name";
+                        $selectFields[] = "d.LN as doctor_last_name";
+                        $joins[] = "LEFT JOIN doctor d ON a.doctor_id = d.doctor_id";
+                    } else {
+                        $selectFields[] = "'' as doctor_first_name";
+                        $selectFields[] = "'' as doctor_last_name";
+                    }
+                } else {
+                    $selectFields[] = "'' as doctor_first_name";
+                    $selectFields[] = "'' as doctor_last_name";
+                }
+                
+                // Build and execute the query
+                $sql = "SELECT " . implode(", ", $selectFields) . "
+                        FROM appointment a
+                        " . implode(" ", $joins) . "
+                        ORDER BY a.appointment_date DESC, a.appointment_time DESC
+                        LIMIT 10";
+                
+                $result = mysqli_query($link, $sql);
+                if ($result) {
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        $reportData['recent_appointments'][] = $row;
+                    }
+                }
+                
+                // Get appointments by date for the last 7 days
+                $dateColumn = 'appointment_date';
+                $cols = mysqli_query($link, "SHOW COLUMNS FROM appointment");
+                $hasDateColumn = false;
+                $hasStatusColumn = false;
+                
+                while ($col = mysqli_fetch_assoc($cols)) {
+                    if (stripos($col['Type'], 'date') !== false) {
+                        $dateColumn = $col['Field'];
+                        $hasDateColumn = true;
+                    }
+                    if ($col['Field'] === 'status') {
+                        $hasStatusColumn = true;
+                    }
+                }
+                
+                if ($hasDateColumn) {
+                    $statusCheck = $hasStatusColumn ? 
+                        "SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed" : 
+                        "0 as completed";
+                    
+                    $sql = "SELECT DATE($dateColumn) as date, 
+                                   COUNT(*) as count, 
+                                   $statusCheck
+                            FROM appointment 
+                            WHERE $dateColumn >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+                            GROUP BY DATE($dateColumn)
+                            ORDER BY date ASC";
+                    
+                    $result = mysqli_query($link, $sql);
+                    if ($result) {
+                        while ($row = mysqli_fetch_assoc($result)) {
+                            $reportData['appointments_by_date'][] = $row;
+                        }
+                    }
+                }
+                
+                // Get revenue by service if service table exists
+                $serviceTableExists = mysqli_query($link, "SHOW TABLES LIKE 'service'");
+                if (mysqli_num_rows($serviceTableExists) > 0) {
+                    $hasServiceId = false;
+                    $cols = mysqli_query($link, "SHOW COLUMNS FROM appointment LIKE 'service_id'");
+                    if (mysqli_num_rows($cols) > 0) {
+                        $hasServiceId = true;
+                        
+                        $serviceNameColumn = 'service_name';
+                        $cols = mysqli_query($link, "SHOW COLUMNS FROM service");
+                        $hasFeeColumn = false;
+                        
+                        while ($col = mysqli_fetch_assoc($cols)) {
+                            if ($col['Field'] === 'name') {
+                                $serviceNameColumn = 'name';
+                            }
+                            if ($col['Field'] === 'fee') {
+                                $hasFeeColumn = true;
+                            }
+                        }
+                        
+                        $feeSelect = $hasFeeColumn ? "SUM(s.fee)" : "0";
+                        $sql = "SELECT s.$serviceNameColumn as service_name, 
+                                       COUNT(a.appointment_id) as appointment_count, 
+                                       $feeSelect as total_revenue
+                                FROM appointment a
+                                JOIN service s ON a.service_id = s.service_id";
+                        
+                        if ($hasStatusColumn) {
+                            $sql .= " WHERE a.status = 'completed'";
+                        }
+                        
+                        $sql .= " GROUP BY s.$serviceNameColumn";
+                        
+                        $result = mysqli_query($link, $sql);
+                        if ($result) {
+                            while ($row = mysqli_fetch_assoc($result)) {
+                                $reportData['revenue_by_service'][] = $row;
+                            }
+                        }
+                    }
+                }
+            }
+            
+        } catch (Exception $e) {
+            // Log error but don't expose it to the user
+            error_log("Error in getReportData: " . $e->getMessage());
+        }
+        
+        return $reportData;
+    }
+    
+    /**
      * Handle manager login
      */
     public static function handleLogin() {
@@ -222,15 +445,173 @@ class ManagerController {
         } else {
             return [
                 'success' => false,
-                'error' => 'No patient found with the provided information',
-                'stats' => [
-                    'total_patients' => 0,
-                    'total_staff' => 0,
-                    'total_doctors' => 0,
-                    'total_appointments' => 0
-                ]
+                'message' => 'Patient not found'
             ];
         }
+    }
+/**
+ * Generate overview report data
+ */
+private static function getOverviewReport($startDate, $endDate) {
+    $manager = new Manager();
+    $link = $manager->getLink();
+    
+    // Get total appointments
+    $totalAppointments = $manager->getTotalAppointments($startDate, $endDate);
+    
+    // Get new patients
+        $newPatients = $manager->getNewPatients($startDate, $endDate);
+        
+        // Get revenue data
+        $revenueData = $manager->getRevenueData($startDate, $endDate);
+        
+        // Get staff performance
+        $staffPerformance = $manager->getStaffPerformance($startDate, $endDate);
+        
+        return [
+            'sections' => [
+                [
+                    'title' => 'Appointments Overview',
+                    'table' => [
+                        'headers' => ['Metric', 'Count'],
+                        'rows' => [
+                            ['Total Appointments', $totalAppointments],
+                            ['New Patients', $newPatients],
+                            ['Completed Appointments', $manager->getCompletedAppointments($startDate, $endDate)],
+                            ['Cancelled Appointments', $manager->getCancelledAppointments($startDate, $endDate)]
+                        ]
+                    
+                    ]
+                ],
+                [
+                    'title' => 'Revenue Summary',
+                    'summary' => [
+                        ['label' => 'Total Revenue', 'value' => '$' . number_format($revenueData['total_revenue'] ?? 0, 2)],
+                        ['label' => 'Average Revenue per Appointment', 'value' => '$' . number_format($revenueData['avg_revenue'] ?? 0, 2)],
+                        ['label' => 'Most Common Service', 'value' => $revenueData['top_service'] ?? 'N/A']
+                    ]
+                ]
+            ]
+        ];
+    }
+    
+    /**
+     * Generate appointments report data
+     */
+    private static function getAppointmentsReport($startDate, $endDate) {
+        $manager = new Manager();
+        $appointments = $manager->getAppointmentsByDateRange($startDate, $endDate);
+        
+        $rows = [];
+        foreach ($appointments as $appt) {
+            $rows[] = [
+                $appt['appointment_date'],
+                $appt['patient_name'],
+                $appt['staff_name'],
+                $appt['service_name'],
+                ucfirst($appt['status']),
+                '$' . number_format($appt['amount'] ?? 0, 2)
+            ];
+        }
+        
+        return [
+            'sections' => [
+                [
+                    'title' => 'Appointment Details',
+                    'table' => [
+                        'headers' => ['Date', 'Patient', 'Staff', 'Service', 'Status', 'Amount'],
+                        'rows' => $rows
+                    ]
+                ]
+            ]
+        ];
+    }
+    
+    /**
+     * Generate revenue report data
+     */
+    private static function getRevenueReport($startDate, $endDate) {
+        $manager = new Manager();
+        $revenueByService = $manager->getRevenueByService($startDate, $endDate);
+        $revenueByMonth = $manager->getRevenueByMonth($startDate, $endDate);
+        
+        $serviceRows = [];
+        foreach ($revenueByService as $service) {
+            $serviceRows[] = [
+                $service['service_name'],
+                $service['appointment_count'],
+                '$' . number_format($service['total_revenue'], 2),
+                '$' . number_format($service['avg_revenue'], 2)
+            ];
+        }
+        
+        return [
+            'sections' => [
+                [
+                    'title' => 'Revenue by Service',
+                    'table' => [
+                        'headers' => ['Service', 'Appointments', 'Total Revenue', 'Average Revenue'],
+                        'rows' => $serviceRows
+                    ]
+                ],
+                [
+                    'title' => 'Monthly Revenue',
+                    'table' => [
+                        'headers' => ['Month', 'Appointments', 'Total Revenue'],
+                        'rows' => $revenueByMonth
+                    ]
+                ]
+            ]
+        ];
+    }
+    
+    /**
+     * Generate patient report data
+     */
+    private static function getPatientReport($startDate, $endDate) {
+        $manager = new Manager();
+        $newPatients = $manager->getNewPatientsDetails($startDate, $endDate);
+        $patientDemographics = $manager->getPatientDemographics();
+        
+        $patientRows = [];
+        foreach ($newPatients as $patient) {
+            $patientRows[] = [
+                $patient['patient_id'],
+                $patient['full_name'],
+                $patient['gender'],
+                $patient['age'],
+                $patient['phone'],
+                $patient['first_appointment']
+            ];
+        }
+        
+        return [
+            'sections' => [
+                [
+                    'title' => 'New Patients',
+                    'table' => [
+                        'headers' => ['ID', 'Name', 'Gender', 'Age', 'Phone', 'First Appointment'],
+                        'rows' => $patientRows
+                    ]
+                ],
+                [
+                    'title' => 'Patient Demographics',
+                    'summary' => [
+                        ['label' => 'Total Patients', 'value' => $patientDemographics['total_patients']],
+                        ['label' => 'Average Age', 'value' => $patientDemographics['avg_age']],
+                        ['label' => 'Gender Distribution', 'value' => $patientDemographics['gender_distribution']]
+                    ]
+                ]
+            ]
+        ];
+    }
+    
+    /**
+     * Validate date format (YYYY-MM-DD)
+     */
+    private static function validateDate($date) {
+        $d = DateTime::createFromFormat('Y-m-d', $date);
+        return $d && $d->format('Y-m-d') === $date;
     }
 }
 

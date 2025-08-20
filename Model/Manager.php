@@ -51,19 +51,104 @@ class Manager {
         }
         return 0;
     }
-
+    
+    /**
+     * Get database connection link
+     * @return mysqli Database connection
+     */
+    public function getLink() {
+        return $this->link;
+    }
+    
     /**
      * Get total number of appointments
-     * @param bool $todayOnly Whether to get only today's appointments
      * @return int
      */
     public function getTotalAppointments() {
-        $sql = "SELECT * FROM appointment";
+        $sql = "SELECT COUNT(*) as count FROM appointment";
         $result = mysqli_query($this->link, $sql);
         if ($result) {
-            return mysqli_num_rows($result);
+            $row = mysqli_fetch_assoc($result);
+            return $row ? (int)$row['count'] : 0;
         }
         return 0;
+    }
+    
+    /**
+     * Get number of completed appointments
+     * @return int
+     */
+    public function getCompletedAppointments() {
+        $sql = "SELECT COUNT(*) as count FROM appointment WHERE status = 'completed'";
+        $result = mysqli_query($this->link, $sql);
+        if ($result) {
+            $row = mysqli_fetch_assoc($result);
+            return $row ? (int)$row['count'] : 0;
+        }
+        return 0;
+    }
+    
+    /**
+     * Get number of pending appointments
+     * @return int
+     */
+    public function getPendingAppointments() {
+        $sql = "SELECT COUNT(*) as count FROM appointment WHERE status = 'pending'";
+        $result = mysqli_query($this->link, $sql);
+        if ($result) {
+            $row = mysqli_fetch_assoc($result);
+            return $row ? (int)$row['count'] : 0;
+        }
+        return 0;
+    }
+    
+    /**
+     * Get number of cancelled appointments
+     * @return int
+     */
+    public function getCancelledAppointments() {
+        $sql = "SELECT COUNT(*) as count FROM appointment WHERE status = 'cancelled'";
+        $result = mysqli_query($this->link, $sql);
+        if ($result) {
+            $row = mysqli_fetch_assoc($result);
+            return $row ? (int)$row['count'] : 0;
+        }
+        return 0;
+    }
+    
+    /**
+     * Get total revenue from completed appointments
+     * @return float
+     */
+    public function getTotalRevenue() {
+        // First check if the service table exists
+        $tableCheck = mysqli_query($this->link, "SHOW TABLES LIKE 'service'");
+        if (mysqli_num_rows($tableCheck) === 0) {
+            // If service table doesn't exist, check for a fee column in the appointment table
+            $columnCheck = mysqli_query($this->link, "SHOW COLUMNS FROM `appointment` LIKE 'fee'");
+            if (mysqli_num_rows($columnCheck) > 0) {
+                // If fee column exists in appointment table, use that
+                $sql = "SELECT COALESCE(SUM(fee), 0) as total 
+                        FROM appointment 
+                        WHERE status = 'completed'";
+            } else {
+                // If no fee information is available, return 0
+                return 0.0;
+            }
+        } else {
+            // Service table exists, use the original query
+            $sql = "SELECT COALESCE(SUM(s.fee), 0) as total 
+                    FROM appointment a
+                    JOIN service s ON a.service_id = s.service_id
+                    WHERE a.status = 'completed'";
+        }
+        
+        $result = mysqli_query($this->link, $sql);
+        if ($result) {
+            $row = mysqli_fetch_assoc($result);
+            return $row ? (float)$row['total'] : 0.0;
+        }
+        return 0.0;
     }
 
     /**

@@ -59,7 +59,10 @@ $currentDate = $data['currentDate'] ?? date('Y-m-d');
     <!-- Header -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">
+            <button class="btn btn-outline-light rounded-circle p-2 me-3" id="sidebarToggle" aria-label="Toggle sidebar" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                <i class="bi bi-chevron-left" id="sidebarToggleIcon" style="font-size: 1.25rem; transition: transform 0.3s ease;"></i>
+            </button>
+            <a class="navbar-brand me-auto" href="#">
                 <img src="images/logo.png" alt="Logo" height="40" class="d-inline-block align-text-top me-2">
                 Doctor Dashboard
             </a>
@@ -93,10 +96,14 @@ $currentDate = $data['currentDate'] ?? date('Y-m-d');
         </div>
     </nav>
 
-    <div class="container-fluid">
-        <div class="row">
+    <div class="container-fluid p-0 overflow-hidden">
+        <div class="d-flex position-relative">
             <!-- Sidebar -->
-            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+            <nav id="sidebar" class="bg-light sidebar h-100 position-fixed">
+                <!-- Close button for mobile -->
+                <div class="d-md-none text-end p-3">
+                    <button class="btn-close" id="closeSidebar"></button>
+                </div>
                 <div class="position-sticky pt-3">
                     <ul class="nav flex-column">
                         <li class="nav-item">
@@ -108,13 +115,13 @@ $currentDate = $data['currentDate'] ?? date('Y-m-d');
                         <li class="nav-item">
                             <a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#appointments-tab">
                                 <i class="bi bi-calendar-check me-2"></i>
-                                Daily Appointments
+                                My Appointments
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#patients-tab">
-                                <i class="bi bi-people me-2"></i>
-                                Patients
+                            <a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#sessions-tab">
+                                <i class="bi bi-clock-history me-2"></i>
+                                Daily Sessions
                             </a>
                         </li>
                         <li class="nav-item">
@@ -128,84 +135,144 @@ $currentDate = $data['currentDate'] ?? date('Y-m-d');
             </nav>
 
             <!-- Main Content -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <main class="flex-grow-1 main-content" style="margin-left: 280px; width: calc(100% - 280px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
+                <div class="container-fluid p-4 pt-2">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
                     <h1 class="h2">Dashboard</h1>
-                    <div class="btn-toolbar mb-2 mb-md-0">
-                        <div class="btn-group me-2">
-                            <button type="button" class="btn btn-sm btn-outline-secondary">
-                                <i class="bi bi-download"></i> Export
-                            </button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary">
-                                <i class="bi bi-printer"></i> Print
-                            </button>
-                        </div>
-                        <button type="button" class="btn btn-sm btn-primary">
-                            <i class="bi bi-plus-circle"></i> New Appointment
-                        </button>
-                    </div>
                 </div>
 
                 <!-- Tab Content -->
                 <div class="tab-content">
                     <!-- Dashboard Tab -->
                     <div class="tab-pane fade show active" id="dashboard-tab">
-                        <div class="row">
-                            <div class="d-flex align-items-center">
-                                <img src="<?php echo !empty($doctor['photo']) ? htmlspecialchars($doctor['photo']) : 'images/doctor-avatar.png'; ?>" 
-                                     alt="Doctor" class="rounded-circle me-2" width="40" height="40">
-                                <div>
-                                    <h6 class="mb-0">Dr. <?php echo !empty($doctor['FN']) ? htmlspecialchars($doctor['FN'] . ' ' . ($doctor['LN'] ?? '')) : 'Doctor'; ?></h6>
-                                    <?php if (!empty($doctor['id'])): ?>
-                                    <small class="text-muted">ID: <?php echo htmlspecialchars($doctor['id']); ?></small>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                            <div class="col-md-4 mb-4">
-                                <div class="card bg-primary text-white h-100">
-                                    <div class="card-body">
-                                        <h5 class="card-title">Today's Appointments</h5>
-                                        <h2 class="display-5"><?php echo count($appointments); ?></h2>
-                                        <p class="card-text">Scheduled for <?php echo date('F j, Y'); ?></p>
+                        <!-- Doctor Profile Card -->
+                        <div class="card mb-4 border-0 shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div>
+                                        <img src="<?php echo !empty($doctor['photo']) ? htmlspecialchars($doctor['photo']) : 'images/doctor-avatar.png'; ?>" 
+                                             alt="Doctor" class="rounded-circle me-4" width="100" height="100">
                                     </div>
-                                    <div class="card-footer d-flex">
-                                        View all appointments
-                                        <i class="bi bi-chevron-right ms-auto"></i>
+                                    <div class="flex-grow-1">
+                                        <h4 class="mb-1">Dr. <?php echo !empty($doctor['FN']) ? htmlspecialchars($doctor['FN'] . ' ' . ($doctor['LN'] ?? '')) : 'Doctor'; ?></h4>
+                                        <p class="text-muted mb-2">
+                                            <i class="bi bi-briefcase me-2"></i>
+                                            <?php echo !empty($doctor['specialization']) ? htmlspecialchars($doctor['specialization']) : 'Medical Professional'; ?>
+                                        </p>
+                                        <div class="d-flex align-items-center text-muted mb-2">
+                                            <i class="bi bi-envelope me-2"></i>
+                                            <?php echo !empty($doctor['email']) ? htmlspecialchars($doctor['email']) : 'N/A'; ?>
+                                        </div>
+                                        <div class="d-flex align-items-center text-muted">
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 mb-4">
-                                <div class="card bg-success text-white h-100">
-                                    <div class="card-body">
-                                        <h5 class="card-title">Completed Sessions</h5>
-                                        <h2 class="display-5">0</h2>
-                                        <p class="card-text">This week</p>
-                                    </div>
-                                    <div class="card-footer d-flex">
-                                        View reports
-                                        <i class="bi bi-chevron-right ms-auto"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 mb-4">
-                                <div class="card bg-warning text-dark h-100">
-                                    <div class="card-body">
-                                        <h5 class="card-title">Pending Actions</h5>
-                                        <h2 class="display-5">3</h2>
-                                        <p class="card-text">Requires your attention</p>
-                                    </div>
-                                    <div class="card-footer d-flex">
-                                        Take action
-                                        <i class="bi bi-chevron-right ms-auto"></i>
+                                    <div class="text-end">
+                                        <span class="badge bg-success bg-opacity-10 text-success mb-2">
+                                            <i class="bi bi-check-circle-fill me-1"></i> Active Now
+                                        </span>
+                                        <style>
+                                            .btn-profile {
+                                                transition: all 0.3s ease;
+                                            }
+                                            .btn-profile:hover {
+                                                transform: translateY(-2px);
+                                                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                                            }
+                                            .btn-edit:hover {
+                                                background-color: #0d6efd;
+                                                color: white !important;
+                                            }
+                                            .btn-settings:hover {
+                                                background-color: #6c757d;
+                                                color: white !important;
+                                            }
+                                        </style>
+                                        <div class="d-grid gap-2 d-md-block mt-3">
+                                            <button class="btn btn-sm btn-outline-primary me-2 btn-profile btn-edit">
+                                                <i class="bi bi-pencil-square"></i> Edit Profile
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-secondary btn-profile btn-settings">
+                                                <i class="bi bi-gear"></i> Settings
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
+                        <!-- Stats Cards -->
+                        <div class="row">
+                            <div class="col-md-4 mb-4">
+                                <div class="card bg-primary text-white h-100 border-0 shadow-sm">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <h6 class="card-title text-white-50 mb-0">TODAY'S APPOINTMENTS</h6>
+                                            <span class="badge bg-white bg-opacity-25">
+                                                <i class="bi bi-calendar3"></i>
+                                            </span>
+                                        </div>
+                                        <h2 class="display-5 fw-bold mb-3 text-white"><?php echo count($appointments); ?></h2>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="small text-white-75"><?php echo date('F j, Y'); ?></span>
+                                            <a href="#" class="text-white text-decoration-none small fw-bold">
+                                                View All <i class="bi bi-arrow-right-short"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <div class="card bg-success text-white h-100 border-0 shadow-sm">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <h6 class="card-title text-white-50 mb-0">TOTAL SESSIONS</h6>
+                                            <span class="badge bg-white bg-opacity-25">
+                                                <i class="bi bi-check2-circle"></i>
+                                            </span>
+                                        </div>
+                                        <h2 class="display-5 fw-bold mb-3 text-white"><?php echo isset($data['total_sessions']) ? $data['total_sessions'] : '0'; ?></h2>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="small text-white-75">All time</span>
+                                            <a href="#" class="text-white text-decoration-none small fw-bold">
+                                                View History <i class="bi bi-arrow-right-short"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <a href="/MVC/View/chat.php" class="text-decoration-none">
+                                    <div class="card bg-warning text-dark h-100 border-0 shadow-sm hover-effect">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                                <h6 class="card-title text-dark-50 mb-0">CHAT WITH PATIENTS</h6>
+                                                <span class="badge bg-white bg-opacity-25">
+                                                    <i class="bi bi-chat-dots"></i>
+                                                </span>
+                                            </div>
+                                            <h2 class="display-5 fw-bold mb-3 text-dark">
+                                                <?php echo isset($data['unread_messages']) ? $data['unread_messages'] : '0'; ?>
+                                                <?php if (isset($data['unread_messages']) && $data['unread_messages'] > 0): ?>
+                                                    <span class="badge bg-danger ms-2">
+                                                        <?php echo $data['unread_messages']; ?>
+                                                    </span>
+                                                <?php endif; ?>
+                                            </h2>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="small text-dark-75">Unread messages</span>
+                                                <span class="text-dark text-decoration-none small fw-bold">
+                                                    Chat Now <i class="bi bi-arrow-right-short"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+
                         <!-- Upcoming Appointments -->
                         <div class="card mb-4">
                             <div class="card-header">
-                                <h5 class="mb-0">Today's Appointments (<?php echo htmlspecialchars($currentDate); ?>)</h5>
+                                <h5 class="mb-0">My Appointments</h5>
                             </div>
                             <div class="card-body">
                                 <?php if (!empty($appointments) && is_array($appointments)): ?>
@@ -241,12 +308,9 @@ $currentDate = $data['currentDate'] ?? date('Y-m-d');
                                                     <td><?php echo !empty($appointment['patient_phone']) ? htmlspecialchars($appointment['patient_phone']) : 'N/A'; ?></td>
                                                     <td><span class="badge bg-success">Scheduled</span></td>
                                                     <td>
-                                                        <?php if (!empty($appointment['id'])): ?>
-                                                        <button class="btn btn-sm btn-primary view-patient" 
-                                                                data-id="<?php echo (int)$appointment['id']; ?>">
+                                                        <a href="single_appoinment_doctor.php?id=<?php echo $appointment['id']; ?>" class="btn btn-sm btn-outline-primary">
                                                             <i class="fas fa-eye"></i> View
-                                                        </button>
-                                                        <?php endif; ?>
+                                                        </a>
                                                     </td>
                                                 </tr>
                                                 <?php endforeach; ?>
@@ -309,6 +373,7 @@ $currentDate = $data['currentDate'] ?? date('Y-m-d');
                             </div>
                         </div>
                     </div>
+                </div>
                 </div>
             </main>
         </div>
@@ -473,6 +538,223 @@ $currentDate = $data['currentDate'] ?? date('Y-m-d');
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleIcon = document.getElementById('sidebarToggleIcon');
+            
+            // Function to update the toggle icon
+            function updateToggleIcon(isCollapsed) {
+                if (toggleIcon) {
+                    toggleIcon.style.transform = isCollapsed ? 'rotate(0deg)' : 'rotate(180deg)';
+                }
+            }
+            const sidebar = document.getElementById('sidebar');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const closeSidebar = document.getElementById('closeSidebar');
+            
+            // Toggle sidebar on button click
+            function toggleSidebar() {
+                const isCollapsed = document.body.classList.toggle('sidebar-collapsed');
+                const mainContent = document.querySelector('.main-content');
+                
+                if (isCollapsed) {
+                    mainContent.style.marginLeft = '0';
+                    mainContent.style.width = '100%';
+                } else {
+                    mainContent.style.marginLeft = '280px';
+                    mainContent.style.width = 'calc(100% - 280px)';
+                }
+                
+                updateToggleIcon(isCollapsed);
+                localStorage.setItem('sidebarCollapsed', isCollapsed);
+            }
+            
+            sidebarToggle.addEventListener('click', toggleSidebar);
+            
+            // Close sidebar when clicking the close button (mobile)
+            if (closeSidebar) {
+                closeSidebar.addEventListener('click', toggleSidebar);
+            }
+            
+            // Initialize sidebar state from localStorage
+            const savedState = localStorage.getItem('sidebarCollapsed') === 'true';
+            if (savedState) {
+                document.body.classList.add('sidebar-collapsed');
+                updateToggleIcon(true);
+            }
+            
+            // Close sidebar on close button click (mobile)
+            if (closeSidebar) {
+                closeSidebar.addEventListener('click', function() {
+                    sidebar.classList.remove('show');
+                    document.body.classList.remove('sidebar-collapsed');
+                });
+            }
+            
+            // Close sidebar when clicking outside (mobile)
+            document.addEventListener('click', function(event) {
+                const isClickInside = sidebar.contains(event.target) || sidebarToggle.contains(event.target);
+                if (!isClickInside && window.innerWidth < 768) { // 768px is Bootstrap's md breakpoint
+                    sidebar.classList.remove('show');
+                    document.body.classList.remove('sidebar-collapsed');
+                }
+            });
+        });
+    </script>
+    <style>
+        /* Sidebar styles */
+        #sidebar {
+            width: 280px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            background-color: #f8f9fa;
+            overflow-y: auto;
+            padding-top: 60px; /* Space for navbar */
+        }
+        
+        .main-content {
+            min-height: 100vh;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-left: 280px;
+            width: calc(100% - 280px);
+            padding-top: 80px; /* Space for navbar */
+        }
+        
+        /* Collapsed state */
+        body.sidebar-collapsed #sidebar {
+            transform: translateX(-100%);
+        }
+        
+        body.sidebar-collapsed .main-content {
+            margin-left: 0 !important;
+            width: 100% !important;
+        }
+        
+        /* Arrow rotation */
+        body:not(.sidebar-collapsed) #sidebarToggleIcon {
+            transform: rotate(180deg);
+        }
+        
+        /* Link hover effects */
+        .card a.text-white,
+        .card a.text-dark {
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .card a.text-white:hover,
+        .card a.text-dark:hover {
+            transform: translateX(5px);
+        }
+        
+        .card a.text-white:hover .bi-arrow-right-short,
+        .card a.text-dark:hover .bi-arrow-right-short {
+            transform: translateX(3px);
+        }
+        
+        .bi-arrow-right-short {
+            transition: transform 0.3s ease;
+            display: inline-block;
+        }
+        
+        /* Card hover effects */
+        .hover-effect:hover {
+            cursor: pointer;
+            transform: translateY(-5px) scale(1.01);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+        }
+        
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+        }
+        
+        /* Dashboard stats cards specific hover */
+        .card.bg-primary:hover {
+            background-color: #0b5ed7 !important;
+        }
+        
+        .card.bg-success:hover {
+            background-color: #157347 !important;
+        }
+        
+        .card.bg-warning:hover {
+            background-color: #ffca2c !important;
+        }
+        
+        /* Ensure content doesn't get hidden behind navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 0;
+            z-index: 1030;
+            padding: 0.5rem 1rem;
+        }
+        
+        /* Adjust padding for main content to prevent overlap with fixed navbar */
+        body {
+            padding-top: 60px;
+        }
+        
+        @media (max-width: 767.98px) {
+            #sidebar {
+                position: fixed;
+                top: 0;
+                left: -300px;
+                bottom: 0;
+                z-index: 1050;
+                transition: left 0.3s ease-in-out;
+                overflow-y: auto;
+                box-shadow: 3px 0 10px rgba(0, 0, 0, 0.1);
+            }
+            #sidebar.show {
+                left: 0;
+            }
+            .sidebar-backdrop {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 1040;
+            }
+            body.sidebar-collapsed .sidebar-backdrop {
+                display: block;
+            }
+            .main-content {
+                transition: margin-left 0.3s ease-in-out;
+            }
+        }
+        /* Ensure content takes full width when sidebar is hidden */
+        @media (min-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            #sidebar {
+                transition: all 0.3s ease-in-out;
+            }
+            body.sidebar-collapsed #sidebar {
+                margin-left: -25%;
+            }
+            body.sidebar-collapsed .main-content {
+                margin-left: -25%;
+            }
+        }
+    </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/doctor_dashboard.js"></script>
 </body>

@@ -398,7 +398,7 @@ $total_appointments = $stats['stats']['total_appointments'];
                     </a>
                 </li>
                 <li>
-                    <a href="manger_inventory.php">
+                    <a href="inventory_receipts.php">
                         <i class="fas fa-boxes"></i>
                         <span>Manage Inventory</span>
                     </a>
@@ -413,6 +413,12 @@ $total_appointments = $stats['stats']['total_appointments'];
                     <a href="update_patient.php">
                         <i class="fas fa-user-edit"></i>
                         <span>Update Patients</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="manager_reports.php">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Reports & Analytics</span>
                     </a>
                 </li>
                 <li>
@@ -492,13 +498,13 @@ $total_appointments = $stats['stats']['total_appointments'];
                     
                     <!-- Row 2 -->
                     <div class="action-row">
-                        <a href="manger_inventory.php" class="action-tab">
+                        <a href="inventory_receipts.php" class="action-tab">
                             <i class="fas fa-boxes"></i>
                             <span>Inventory</span>
                         </a>
-                        <a href="reports.php" class="action-tab">
+                        <a href="manager_reports.php" class="action-tab">
                             <i class="fas fa-chart-bar"></i>
-                            <span>Reports</span>
+                            <span>Reports & Analytics</span>
                         </a>
                         <a href="manger_patient_management.php" class="action-tab">
                             <i class="fas fa-user-injured"></i>

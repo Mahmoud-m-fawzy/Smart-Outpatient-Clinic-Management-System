@@ -40,8 +40,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             background-color: #fff;
             margin: 5% auto;
             padding: 0;
-            width: 90%;
-            max-width: 500px;
+            width: 95%;
+            max-width: 700px;
+            display: flex;
+            flex-direction: column;
             border-radius: 16px;
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
@@ -93,8 +95,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
         .modal-body {
-            padding: 30px;
+            padding: 25px;
             text-align: center;
+            overflow-y: visible;
         }
 
         .success-icon {
@@ -253,23 +256,234 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             font-weight: 500;
             background: #f5f5f5;
         }
+        /* Original slot style */
         .available-slot {
             background: #4CAF50;
             color: white;
             padding: 0.8rem 0.6rem;
             border-radius: 6px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             min-height: 80px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            transform: scale(1);
+            z-index: 1;
+        }
+        
+        /* Grid layout for multiple doctors */
+        .doctors-slot {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            min-height: 40px;
+            align-content: flex-start;
+            width: 100%;
+        }
+        
+        /* Base slot style for all doctors */
+        .doctors-slot .available-slot,
+        .doctors-slot .unavailable-slot {
+            color: white;
+            background: #4CAF50;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 0.85em;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 36px;
+            width: 100%;
+            font-weight: 500;
+        }
+
+        /* Unavailable slot style */
+        .unavailable-slot {
+            background: #FF0000 !important; /* Strong red */
+            color: white;
+            height: 100px; /* Increased height */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 2px 0;
+            box-sizing: border-box;
+        }
+        
+        .unavailable-slot .doctor-name {
+            margin: 4px 0;
+            color: white !important;
+            font-size: 1em;
+            font-weight: 600;
+            line-height: 1.2;
+            word-break: break-word;
+            text-align: center;
+        }
+        
+        /* Set consistent heights for all slot types */
+        /* Single doctor slot */
+        .available-slot,
+        .unavailable-slot {
+            min-height: 100px;
+            height: 100%;
+        }
+        
+        /* Two doctors - vertical stack */
+        .two-doctors .available-slot,
+        .two-doctors .unavailable-slot {
+            height: 100px;
+        }
+        
+        /* 2x2 grid */
+        .four-doctors .available-slot,
+        .four-doctors .unavailable-slot {
+            height: 100px;
+            padding: 4px 6px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .four-doctors .doctor-name {
+            font-size: 0.95em;
+            line-height: 1.2;
+            margin: 2px 0;
+            word-break: break-word;
+        }
+        
+        /* Many doctors grid */
+        .many-doctors .available-slot,
+        .many-doctors .unavailable-slot {
+            height: 100px;
+        }
+        
+        /* Layout for 2 doctors - stacked vertically */
+        .two-doctors {
+            flex-direction: column;
+            gap: 2px;
+        }
+        
+        #paymob-iframe-container {
+            width: 100%;
+            min-height: 500px;
+            height: auto;
+            margin: 20px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .two-doctors .available-slot,
+        .two-doctors .unavailable-slot {
+            width: 100%;
+            flex: 0 0 auto;
+            margin: 2px 0;
+            padding: 4px 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        /* Layout for 3-4 doctors (2x2 grid) */
+        .four-doctors .available-slot,
+        .four-doctors .unavailable-slot,
+        .many-doctors .available-slot,
+        .many-doctors .unavailable-slot {
+            width: calc(50% - 2px);
+            flex: 0 0 calc(50% - 2px);
+            height: 60px;
+        }
+        
+        /* Ensure text is properly aligned */
+        .doctor-name {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 1em;
+            margin: 2px 0;
+            color: white !important;
+            font-weight: 500;
+            line-height: 1.3;
+        }
+        
+        .availability-status {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 4px;
+            color: white;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .slot-location {
+            font-size: 0.8em;
+            opacity: 0.9;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .four-doctors .available-slot {
+            width: calc(50% - 2px);
+            height: 50%;
+        }
+        
+        .many-doctors .available-slot {
+            width: 100%;
+            height: 25%;
+            font-size: 0.8em;
+        }
+        
+        .doctor-info {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 100%;
+        }
+        
+        .doctor-name {
+            font-weight: bold;
+            font-size: 0.9em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #333;
+        }
+        
+        .slot-location {
+            font-size: 0.7em;
+            color: #666;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         .available-slot:hover {
-            background: #43A047;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            background: #1B5E20;
+            transform: scale(1.02) translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+        }
+        
+        /* Ensure hover effect works on all slot types */
+        .two-doctors .available-slot:hover,
+        .four-doctors .available-slot:hover,
+        .many-doctors .available-slot:hover,
+        .doctors-slot .available-slot:hover {
+            background: #1B5E20 !important;
+            transform: scale(1.02) translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+        }
+        
+        .doctors-slot .available-slot:hover {
+            background: #1B5E20 !important;
         }
         
         .available-slot small {
@@ -545,66 +759,146 @@ $doctors = $doctor->getAllDoctors();
                         '8:00 AM', '9:00 AM', '10:00 AM', '11:00 AM', '12:00 PM',
                         '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM'
                     ];
-                    foreach ($timeSlots as $time): ?>
-                        <tr>
-                            <td class="time-slot"><?= $time ?></td>
-                    <?php foreach (["Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"] as $day): ?>
-                        <?php
+                    
+                    // First, reorganize the schedule data by day and time
+                    $scheduleByDayTime = [];
+                    foreach ($schedule as $slot) {
+                        $day = $slot['day_of_week'];
+                        if (!isset($scheduleByDayTime[$day])) {
+                            $scheduleByDayTime[$day] = [];
+                        }
+                        // Add the slot to the corresponding day
+                        $scheduleByDayTime[$day][] = $slot;
+                    }
+                    
+                    foreach ($timeSlots as $time): 
                         $currentTime = strtotime($time);
                         $currentTimeStr = date('H:i:s', $currentTime);
-                        $slotAvailable = false;
-                        $isBooked = false;
-
-                        // Check schedule for this day and time
-                        foreach ($schedule as $slot) {
-                            if ($slot['day_of_week'] === $day) {
-                                $startTime = strtotime($slot['start_time']);
-                                $endTime = strtotime($slot['end_time']);
+                    ?>
+                        <tr>
+                            <td class="time-slot"><?= $time ?></td>
+                            <?php 
+                            $days = ["Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"];
+                            foreach ($days as $day): 
+                                $matchingSlots = [];
+                                $hasBooked = false;
                                 
-                                if ($currentTime >= $startTime && $currentTime <= $endTime) {
-                                    $slotAvailable = true;
-                                    // Check if this slot is booked
-                                    if (isset($slot['booked_slots']) && in_array($currentTimeStr, $slot['booked_slots'])) {
-                                        $isBooked = true;
+                                // Find all matching slots for this day and time
+                                if (isset($scheduleByDayTime[$day])) {
+                                    foreach ($scheduleByDayTime[$day] as $slot) {
+                                        $startTime = strtotime($slot['start_time']);
+                                        $endTime = strtotime($slot['end_time']);
+                                        
+                                        if ($currentTime >= $startTime && $currentTime <= $endTime) {
+                                            $isBooked = isset($slot['booked_slots']) && in_array($currentTimeStr, $slot['booked_slots']);
+                                            if ($isBooked) {
+                                                $hasBooked = true;
+                                                break;
+                                            }
+                                            $matchingSlots[] = $slot;
+                                        }
                                     }
-                                    $doctorName = $slot['doctor_name'];
-                                    break;
                                 }
-                            }
-                        }
-
-                        if ($slotAvailable): ?>
-                            <td>
-                                <?php if ($isBooked): ?>
-                                    <div class="booked-slot">Booked</div>
-                                <?php elseif ($slot['availability'] === 'Unavailable'): ?>
-                                    <div class="unavailable-slot">
-                                        Unavailable
-                                    </div>
-                                <?php else: ?>
-                                    <div class="available-slot" 
-                                         data-time="<?= $currentTimeStr ?>" 
-                                         data-day="<?= $day ?>"
-                                         data-doctor-id="<?= $slot['doctor_id'] ?>"
-                                         data-doctor-name="<?= htmlspecialchars($doctorName) ?>"
-                                         data-location="<?= htmlspecialchars($slot['location'] ?? 'Not specified') ?>"
-                                         data-notes="<?= htmlspecialchars($slot['notes'] ?? 'No notes') ?>">
-                                        Available<br>
-                                        <small><?= htmlspecialchars($doctorName) ?></small>
-                                        <?php if (!empty($slot['location'])): ?>
-                                            <div class="slot-location">
-                                                <i class="fas fa-map-marker-alt"></i> <?= htmlspecialchars($slot['location']) ?>
+                                
+                                // Determine the number of available doctors
+                                $availableDoctors = [];
+                                $unavailableDoctors = [];
+                                
+                                foreach ($matchingSlots as $slot) {
+                                    if ($slot['availability'] === 'Unavailable') {
+                                        $unavailableDoctors[] = $slot;
+                                    } else {
+                                        $availableDoctors[] = $slot;
+                                    }
+                                }
+                                
+                                $totalAvailable = count($availableDoctors);
+                                $totalUnavailable = count($unavailableDoctors);
+                                $totalDoctors = $totalAvailable + $totalUnavailable;
+                                
+                                // Calculate grid class based on number of available doctors
+                                $gridClass = '';
+                                $useGrid = false;
+                                if ($totalAvailable > 1) {  // Only use grid for 2 or more doctors
+                                    $useGrid = true;
+                                    if ($totalAvailable <= 2) {
+                                        $gridClass = 'two-doctors';
+                                    } else if ($totalAvailable <= 4) {
+                                        $gridClass = 'four-doctors';
+                                    } else {
+                                        $gridClass = 'many-doctors';
+                                    }
+                                }
+                                ?>
+                                <td>
+                                    <?php 
+                                    if ($hasBooked): ?>
+                                        <div class="booked-slot">Booked</div>
+                                    <?php 
+                                    elseif ($totalAvailable > 0 || $totalUnavailable > 0): 
+                                        // Calculate total number of doctors (both available and unavailable)
+                                        $totalDoctors = count($availableDoctors) + count($unavailableDoctors);
+                                        
+                                        // Determine grid class based on total number of doctors
+                                        $gridClass = '';
+                                        if ($totalDoctors > 1) {
+                                            if ($totalDoctors === 2) {
+                                                $gridClass = 'two-doctors';
+                                            } elseif ($totalDoctors <= 4) {
+                                                $gridClass = 'four-doctors';
+                                            } else {
+                                                $gridClass = 'many-doctors';
+                                            }
+                                        }
+                                        
+                                        if ($totalDoctors > 0): ?>
+                                            <div class="doctors-slot <?= $gridClass ?>">
+                                                <?php 
+                                                // First show available doctors
+                                                foreach ($availableDoctors as $slot): 
+                                                    $doctorName = "Dr. {$slot['FN']} {$slot['LN']}";
+                                                    $location = $slot['location'] ?? '';
+                                                ?>
+                                                    <div class="available-slot" 
+                                                         data-time="<?= $currentTimeStr ?>" 
+                                                         data-day="<?= $day ?>"
+                                                         data-doctor-id="<?= $slot['doctor_id'] ?>"
+                                                         data-doctor-name="<?= htmlspecialchars($doctorName) ?>"
+                                                         data-location="<?= htmlspecialchars($location) ?>"
+                                                         data-slot-fee="<?= isset($slot['slot_fee']) ? (int)$slot['slot_fee'] : 0 ?>">
+                                                        <div class="availability-status">Available</div>
+                                                        <div class="doctor-name"><?= htmlspecialchars($doctorName) ?></div>
+                                                        <?php if (!empty($location)): ?>
+                                                            <div class="slot-location">
+                                                                <i class="fas fa-map-marker-alt"></i> <?= htmlspecialchars($location) ?>
+                                                            </div>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                <?php 
+                                                endforeach; 
+                                                
+                                                // Then show unavailable doctors
+                                                foreach ($unavailableDoctors as $slot): 
+                                                    $doctorName = "Dr. {$slot['FN']} {$slot['LN']}";
+                                                    $location = $slot['location'] ?? '';
+                                                ?>
+                                                    <div class="unavailable-slot">
+                                                        <div class="doctor-name"><?= htmlspecialchars($doctorName) ?></div>
+                                                        <div class="availability-status">Unavailable</div>
+                                                    </div>
+                                                <?php endforeach; ?>
                                             </div>
-                                        <?php endif; ?>
-                                    </div>
-                                <?php endif; ?>
-                            </td>
-                        <?php else: ?>
-                            <td></td>
-                        <?php endif; ?>
+                                        <?php 
+                                        endif; 
+                                    else: ?>
+                                        <!-- Empty cell if no doctors -->
+                                    <?php 
+                                    endif; 
+                                    ?>
+                                </td>
+                            <?php endforeach; ?>
+                        </tr>
                     <?php endforeach; ?>
-                </tr>
-            <?php endforeach; ?>
         </table>
     </div>
     </div>
@@ -668,7 +962,7 @@ $doctors = $doctor->getAllDoctors();
         <span>All rights reserved for Faculty of Physical Therapy at MSA University ©2025</span>
     </div>
 </footer>
-    <!-- FawryPay-like Confirmation Modal -->
+    <!-- Booking and Payment Modal -->
     <div id="bookingModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -679,30 +973,73 @@ $doctors = $doctor->getAllDoctors();
                 <span class="close">&times;</span>
             </div>
             <div class="modal-body">
-                <div class="success-icon">
-                    <i class="fas fa-calendar-check"></i>
+                <!-- Step 1: Booking Confirmation -->
+                <div id="bookingConfirmationStep">
+                    <div class="success-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <h3>Confirm Your Booking</h3>
+                    <p class="confirmation-text">Please review your appointment details before proceeding to payment.</p>
+                    
+                    <div class="booking-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Doctor:</span>
+                            <span id="modalDoctorName" class="detail-value"></span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Date:</span>
+                            <span id="modalAppointmentDate" class="detail-value"></span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Time:</span>
+                            <span id="modalTimeSlot" class="detail-value"></span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Fee:</span>
+                            <span class="detail-value" id="modalFee">0 EGP</span>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button id="cancelBooking" class="btn btn-cancel">Cancel</button>
+                        <button id="proceedToPayment" class="btn btn-confirm">Proceed to Payment</button>
+                    </div>
                 </div>
-                <h3>Confirm Your Booking</h3>
-                <p class="confirmation-text">Do you want to book this appointment?</p>
-                
-                <div class="booking-details">
-                    <div class="detail-row">
-                        <span class="detail-label">Doctor:</span>
-                        <span id="modalDoctorName" class="detail-value"></span>
+
+                <!-- Step 2: Payment Form -->
+                <div id="paymentStep" style="display: none;">
+                    <div class="success-icon">
+                        <i class="fas fa-credit-card"></i>
                     </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Date:</span>
-                        <span id="modalAppointmentDate" class="detail-value"></span>
+                    <h3>Complete Payment</h3>
+                    <p class="confirmation-text">Please enter your payment details to confirm your appointment</p>
+                    
+                    <div id="paymob-iframe-container" style="width: 100%; height: 400px; margin: 20px 0;">
+                        <!-- Paymob iframe will be loaded here -->
+                        <div style="display: flex; justify-content: center; align-items: center; height: 100%;">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="sr-only">Loading payment...</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Time:</span>
-                        <span id="modalTimeSlot" class="detail-value"></span>
+                    
+                    <div class="action-buttons">
+                        <button id="backToBooking" class="btn btn-cancel">Back</button>
+                        <button id="confirmPayment" class="btn btn-confirm" style="display: none;">Confirm Payment</button>
                     </div>
                 </div>
-                
-                <div class="action-buttons">
-                    <button id="cancelBooking" class="btn btn-cancel">Cancel</button>
-                    <button id="confirmBooking" class="btn btn-confirm">Confirm Booking</button>
+
+                <!-- Step 3: Success Message -->
+                <div id="successStep" style="display: none; text-align: center;">
+                    <div class="success-icon" style="color: #4CAF50;">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3>Appointment Confirmed!</h3>
+                    <p class="confirmation-text">Your appointment has been successfully booked and payment received.</p>
+                    <div class="booking-details" id="bookingReference">
+                        <!-- Booking reference will be shown here -->
+                    </div>
+                    <button id="closeModal" class="btn btn-confirm" style="margin-top: 20px;">Done</button>
                 </div>
             </div>
         </div>
@@ -717,7 +1054,10 @@ $doctors = $doctor->getAllDoctors();
         dayOfWeek: null,
         timeSlot: null,
         location: null,
-        notes: null
+        notes: null,
+        paymentToken: null,
+        bookingReference: null,
+        amount: 0 // Will be set from slot_fee
     };
 
     // Debug: Log when the script loads
@@ -727,7 +1067,17 @@ $doctors = $doctor->getAllDoctors();
     const modal = document.getElementById('bookingModal');
     const closeBtn = document.querySelector('.close');
     const cancelBtn = document.getElementById('cancelBooking');
-    const confirmBtn = document.getElementById('confirmBooking');
+    const proceedToPaymentBtn = document.getElementById('proceedToPayment');
+    const backToBookingBtn = document.getElementById('backToBooking');
+    const confirmPaymentBtn = document.getElementById('confirmPayment');
+    const closeModalBtn = document.getElementById('closeModal');
+    
+    // Get step containers
+    const bookingStep = document.getElementById('bookingConfirmationStep');
+    const paymentStep = document.getElementById('paymentStep');
+    const successStep = document.getElementById('successStep');
+    const paymobIframeContainer = document.getElementById('paymob-iframe-container');
+    let paymobIframe = null;
 
     // Set up click handlers for available slots
     document.addEventListener('DOMContentLoaded', function() {
@@ -759,6 +1109,9 @@ $doctors = $doctor->getAllDoctors();
                     displayTime
                 });
                 
+                // Get slot fee from data attribute, default to 0 if not set
+                const slotFee = parseInt(this.getAttribute('data-slot-fee')) || 0;
+                
                 // Store booking data
                 currentBooking = {
                     doctorId: doctorId,
@@ -767,8 +1120,11 @@ $doctors = $doctor->getAllDoctors();
                     timeSlot: timeSlot,
                     location: location,
                     notes: notes,
-                    displayTime: displayTime
+                    displayTime: displayTime,
+                    amount: slotFee // Use the slot fee from the database
                 };
+                
+                console.log('Updated currentBooking with amount:', currentBooking);
                 
                 // Update modal content
                 document.getElementById('modalDoctorName').textContent = doctorName;
@@ -784,6 +1140,10 @@ $doctors = $doctor->getAllDoctors();
                     });
                 
                 document.getElementById('modalTimeSlot').textContent = displayTime;
+                
+                // Update fee display - show 'Free' if amount is 0
+                const feeDisplay = document.getElementById('modalFee');
+                feeDisplay.textContent = slotFee === 0 ? 'Free' : slotFee + ' EGP';
                 
                 // Show the modal
                 modal.style.display = 'block';
@@ -814,93 +1174,470 @@ $doctors = $doctor->getAllDoctors();
     }
 
     // Close modal when clicking on X or Cancel button
-    closeBtn.onclick = function() {
+    function closeModal() {
         modal.style.display = 'none';
         document.body.style.overflow = 'auto';
-    }
-
-    cancelBtn.onclick = function() {
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-    }
-
-    // Close modal when clicking outside of it
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
+        // Reset to booking step for next time
+        showStep('booking');
+        // Clear any existing iframe
+        if (paymobIframe) {
+            paymobIframe.remove();
+            paymobIframe = null;
         }
     }
 
-    // Handle booking confirmation
-    confirmBtn.addEventListener('click', function() {
-        // Disable button to prevent double submission
-        confirmBtn.disabled = true;
-        confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+    // Function to create a free appointment without payment
+    async function createFreeAppointment() {
+        try {
+            // Get the next occurrence of the selected day
+            const appointmentDate = getNextDayOfWeek(currentBooking.dayOfWeek);
+            const formattedDate = appointmentDate.toISOString().split('T')[0];
+            
+            // Prepare the appointment data according to database schema
+            const appointmentData = {
+                doctor_id: currentBooking.doctorId,
+                patient_id: <?= $_SESSION['user_id'] ?? 0 ?>, // Get patient ID from session
+                appointment_time: currentBooking.timeSlot,
+                day_of_week: currentBooking.dayOfWeek,
+                location: currentBooking.location || 'Clinic',
+                notes: currentBooking.notes || 'Free appointment booking',
+                visit_type: 'Consultation',
+                action: 'create_free_appointment' // Special action for free appointments
+            };
+            
+            console.log('Creating free appointment with data:', appointmentData);
+            
+            // Send the appointment data to the server using the BookingController
+            const response = await fetch('../Controller/BookingController.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams(appointmentData).toString()
+            });
+
+            const responseText = await response.text();
+            console.log('Server raw response:', responseText);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}. Response: ${responseText}`);
+            }
+
+            try {
+                const result = JSON.parse(responseText);
+                console.log('Appointment creation response:', result);
+
+                if (result.success) {
+                    // Update the UI to show success
+                    currentBooking.bookingReference = result.booking_reference || 'FREE-' + Date.now();
+                    updateUIForSuccess();
+                } else {
+                    throw new Error(result.error || result.message || 'Failed to create appointment');
+                }
+            } catch (jsonError) {
+                console.error('Failed to parse JSON:', jsonError);
+                throw new Error('Received an invalid response from the server. Check the console for the raw response.');
+            }
+        } catch (error) {
+            console.error('Error creating free appointment:', error);
+            alert('Failed to book appointment: ' + (error.message || 'Please try again.'));
+            if (proceedToPaymentBtn) {
+                proceedToPaymentBtn.disabled = false;
+                proceedToPaymentBtn.innerHTML = 'Proceed to Payment';
+            }
+        }
+    }
+    
+    // Function to update UI after successful booking (for both free and paid)
+    function updateUIForSuccess() {
+        // Mark the slot as booked in the UI
+        const slot = document.querySelector(`[data-time="${currentBooking.timeSlot}"][data-day="${currentBooking.dayOfWeek}"]`);
+        if (slot) {
+            slot.classList.remove('available-slot');
+            slot.classList.add('booked-slot');
+            slot.innerHTML = 'Booked';
+            slot.onclick = null;
+        }
         
-        console.log('Sending appointment data:', {
-            doctor_id: currentBooking.doctorId,
-            day_of_week: currentBooking.dayOfWeek,
-            appointment_time: currentBooking.timeSlot
-        });
+        // Update UI to show success
+        document.getElementById('bookingReference').innerHTML = `
+            <div class="detail-row">
+                <span class="detail-label">Booking Reference:</span>
+                <span class="detail-value">${currentBooking.bookingReference || 'N/A'}</span>
+            </div>
+            ${currentBooking.amount > 0 ? `
+            <div class="detail-row">
+                <span class="detail-label">Amount Paid:</span>
+                <span class="detail-value">${currentBooking.amount} EGP</span>
+            </div>` : ''}
+        `;
         
-        // Get the appointment date (next occurrence of the selected day)
-        const appointmentDate = getNextDayOfWeek(currentBooking.dayOfWeek).toISOString().split('T')[0];
+        // Show success step
+        showStep('success');
         
-        // Prepare request data
-        const requestData = {
-            doctor_id: currentBooking.doctorId,
-            day_of_week: currentBooking.dayOfWeek,
-            appointment_time: currentBooking.timeSlot,
-            appointment_date: appointmentDate,
-            location: currentBooking.location,
-            notes: currentBooking.notes
+        // Close modal and redirect to dashboard after 2 seconds
+        setTimeout(() => {
+            closeModal();
+            window.location.href = 'patient_dashboard.php';
+        }, 2000);
+    }
+    
+    // Close modal when clicking outside of it or on X button
+    window.onclick = function(event) {
+        if (event.target == modal || event.target.classList.contains('close')) {
+            closeModal();
+        }
+    };
+    
+    // Close modal from success step
+    closeModalBtn.onclick = closeModal;
+    
+    // Close modal when clicking cancel button
+    document.getElementById('cancelBooking').onclick = closeModal;
+    
+    // Back to booking from payment
+    backToBookingBtn.onclick = function() {
+        showStep('booking');
+    };
+    
+    // Proceed to payment or confirm free appointment
+    proceedToPaymentBtn.onclick = function() {
+        // Show loading state
+        this.disabled = true;
+        const originalText = this.innerHTML;
+        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        
+        // Check if this is a free appointment (fee = 0)
+        if (currentBooking.amount === 0) {
+            // For free appointments, skip payment and directly confirm
+            createFreeAppointment();
+        } else {
+            // For paid appointments, proceed with payment flow
+            createBookingForPayment();
+        }
+        
+        // Reset button state if there's an error
+        setTimeout(() => {
+            if (this.disabled) {
+                this.disabled = false;
+                this.innerHTML = originalText;
+            }
+        }, 10000); // Reset after 10 seconds if no response
+    };
+    
+    // Function to load Paymob iframe
+    function loadPaymobIframe() {
+        if (!currentBooking.paymentToken) {
+            alert('Payment token not available. Please try again.');
+            return;
+        }
+        
+        paymobIframeContainer.innerHTML = ''; // Clear loading spinner
+        
+        // Create iframe
+        paymobIframe = document.createElement('iframe');
+        paymobIframe.id = 'paymob-iframe';
+        paymobIframe.src = `https://accept.paymob.com/api/acceptance/iframes/929491?payment_token=${currentBooking.paymentToken}`;
+        paymobIframe.style.width = '100%';
+        paymobIframe.style.height = '400px';
+        paymobIframe.style.border = '1px solid #ddd';
+        paymobIframe.style.borderRadius = '8px';
+        
+        // Add event listener for iframe load
+        paymobIframe.onload = function() {
+            console.log('Paymob iframe loaded');
         };
         
-        console.log('Sending request data:', requestData);
+        paymobIframeContainer.appendChild(paymobIframe);
         
-        // Send AJAX request to book the appointment
-        $.ajax({
-            url: '../Controller/BookingController.php?action=book',
-            type: 'POST',
-            dataType: 'json',
-            data: requestData,
-            success: function(response) {
-                if (response.success) {
+        // Listen for messages from Paymob iframe
+        window.addEventListener('message', handlePaymobMessage, false);
+    }
+    
+    // Handle messages from Paymob iframe
+    function handlePaymobMessage(event) {
+        // Make sure the message is from Paymob
+        if (event.origin !== 'https://accept.paymob.com') {
+            return;
+        }
+        
+        console.log('Message from Paymob:', event.data);
+        
+        // Handle different types of messages from Paymob
+        if (event.data.type) {
+            switch(event.data.type) {
+                case 'TRANSACTION_COMPLETED':
+                    console.log('Payment completed successfully', event.data);
                     // Show success message
-                    alert('Appointment booked successfully!');
-                    // Refresh the page to update the schedule
-                    window.location.reload();
-                } else {
-                    alert('Error: ' + (response.error || 'Failed to book appointment'));
-                    confirmBtn.disabled = false;
-                    confirmBtn.innerHTML = 'Confirm Booking';
+                    showStep('success');
+                    break;
+                case 'TRANSACTION_FAILED':
+                    console.log('Payment failed', event.data);
+                    // Show success step since booking is already created
+                    showStep('success');
+                    break;
+                case 'PAYMENT_WIDGET_LOADED':
+                    console.log('Payment widget loaded');
+                    break;
+                default:
+                    console.log('Unhandled Paymob event:', event.data);
+            }
+        }
+    }
+    
+    // Create payment token for Paymob iframe
+    async function createBookingForPayment() {
+        // First, create the booking
+        try {
+            // Get the appointment date (next occurrence of the selected day)
+            const appointmentDate = getNextDayOfWeek(currentBooking.dayOfWeek).toISOString().split('T')[0];
+            
+            // Prepare booking data
+            const bookingData = {
+                doctor_id: currentBooking.doctorId,
+                patient_id: <?= $_SESSION['user_id'] ?? 0 ?>,
+                appointment_time: currentBooking.timeSlot,
+                day_of_week: currentBooking.dayOfWeek,
+                appointment_date: appointmentDate,
+                location: currentBooking.location || 'Clinic',
+                notes: currentBooking.notes || 'Paid appointment booking',
+                status: 'Scheduled',
+                visit_type: 'Consultation',
+                action: 'book',
+                amount: currentBooking.amount
+            };
+            
+            console.log('Creating booking with data:', bookingData);
+            
+            // Create the booking
+            const response = await fetch('../Controller/BookingController.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams(bookingData).toString()
+            });
+            
+            const responseText = await response.text();
+            console.log('Booking creation response:', responseText);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            let result;
+            try {
+                result = JSON.parse(responseText);
+            } catch (e) {
+                throw new Error('Invalid JSON response from server');
+            }
+            
+            if (result && result.success) {
+                // Store the booking reference
+                currentBooking.bookingReference = result.booking_reference || 'PAID-' + Date.now();
+                
+                // Mark the slot as booked in the UI
+                const slot = document.querySelector(`[data-time="${currentBooking.timeSlot}"][data-day="${currentBooking.dayOfWeek}"]`);
+                if (slot) {
+                    slot.classList.remove('available-slot');
+                    slot.classList.add('booked-slot');
+                    slot.innerHTML = 'Booked';
+                    slot.onclick = null;
                 }
-            },
-            error: function(xhr, status, error) {
-                console.error('AJAX Error Details:', {
-                    status: xhr.status,
-                    statusText: xhr.statusText,
-                    responseText: xhr.responseText,
-                    error: error,
-                    readyState: xhr.readyState
+                
+                // Now proceed with payment initiation
+                const paymentData = {
+                    doctor_id: currentBooking.doctorId,
+                    day_of_week: currentBooking.dayOfWeek,
+                    appointment_time: currentBooking.timeSlot,
+                    appointment_date: appointmentDate,
+                    location: currentBooking.location || 'Clinic',
+                    notes: currentBooking.notes || 'Appointment booking',
+                    amount: currentBooking.amount,
+                    action: 'initiate_payment',
+                    booking_reference: currentBooking.bookingReference
+                };
+                
+                console.log('Initiating payment with data:', paymentData);
+                
+                // Send AJAX request to initiate payment
+                $.ajax({
+                    url: '../Controller/BookingController.php?action=initiate_payment',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: paymentData,
+                    success: function(response) {
+                        console.log('Payment initiation response:', response);
+                        if (response && response.success && response.payment_token) {
+                            // Store payment token
+                            currentBooking.paymentToken = response.payment_token;
+                            
+                            // Proceed to payment step
+                            showStep('payment');
+                        } else {
+                            const errorMsg = response && response.error ? response.error : 'Failed to initiate payment';
+                            console.error('Payment initiation failed:', errorMsg);
+                            // Still show success since booking is created
+                            showStep('success');
+                        }
+                        proceedToPaymentBtn.disabled = false;
+                        proceedToPaymentBtn.innerHTML = 'Proceed to Payment';
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Payment initiation error:', { status, error, response: xhr.responseText });
+                        // Still show success since booking is created
+                        showStep('success');
+                        proceedToPaymentBtn.disabled = false;
+                        proceedToPaymentBtn.innerHTML = 'Proceed to Payment';
+                    }
                 });
                 
-                let errorMsg = 'Network error. Please try again.';
-                if (xhr.responseText) {
-                    try {
-                        const response = JSON.parse(xhr.responseText);
-                        errorMsg = response.error || errorMsg;
-                    } catch (e) {
-                        errorMsg = xhr.responseText || errorMsg;
-                    }
-                }
-                alert('Error: ' + errorMsg);
-                confirmBtn.disabled = false;
-                confirmBtn.innerHTML = 'Confirm Booking';
+            } else {
+                throw new Error(result.error || 'Failed to create appointment');
             }
-        });
-    });
+        } catch (error) {
+            console.error('Error creating booking:', error);
+            alert('Error creating booking: ' + (error.message || 'Please try again.'));
+            proceedToPaymentBtn.disabled = false;
+            proceedToPaymentBtn.innerHTML = 'Proceed to Payment';
+        }
+    }
+    
+    // Complete booking after successful payment in iframe
+    async function completeBooking(paymentSuccess) {
+        if (!paymentSuccess) {
+            alert('Payment failed. Please try again.');
+            showStep('booking');
+            return;
+        }
+        
+        // Prepare booking data
+        const appointmentDate = getNextDayOfWeek(currentBooking.dayOfWeek).toISOString().split('T')[0];
+        const bookingData = {
+            doctor_id: currentBooking.doctorId,
+            patient_id: <?= $_SESSION['user_id'] ?? 0 ?>,
+            appointment_time: currentBooking.timeSlot,
+            day_of_week: currentBooking.dayOfWeek,
+            appointment_date: appointmentDate,
+            location: currentBooking.location || 'Clinic',
+            notes: currentBooking.notes || 'Paid appointment booking',
+            status: 'Scheduled',
+            visit_type: 'Consultation',
+            action: 'book',
+            amount: currentBooking.amount
+        };
+        
+        try {
+            // Create the booking in the database
+            const response = await fetch('../Controller/BookingController.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams(bookingData).toString()
+            });
+            
+            const responseText = await response.text();
+            console.log('Booking creation response:', responseText);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            let result;
+            try {
+                result = JSON.parse(responseText);
+            } catch (e) {
+                throw new Error('Invalid JSON response from server');
+            }
+            
+            if (result && result.success) {
+                // Store the booking reference
+                currentBooking.bookingReference = result.booking_reference || 'PAID-' + Date.now();
+                
+                // Mark the slot as booked in the UI
+                const slot = document.querySelector(`[data-time="${currentBooking.timeSlot}"][data-day="${currentBooking.dayOfWeek}"]`);
+                if (slot) {
+                    slot.classList.remove('available-slot');
+                    slot.classList.add('booked-slot');
+                    slot.innerHTML = 'Booked';
+                    slot.onclick = null;
+                }
+                
+                // Show success message
+                showStep('success');
+            } else {
+                throw new Error(result.error || 'Failed to create appointment');
+            }
+        } catch (error) {
+            console.error('Error creating booking:', error);
+            alert('Error creating booking after payment: ' + (error.message || 'Please contact support.'));
+            showStep('booking');
+            return;
+        }
+        
+        // Update UI to show booking reference and amount
+        document.getElementById('bookingReference').innerHTML = `
+            <div class="detail-row">
+                <span class="detail-label">Booking Reference:</span>
+                <span class="detail-value">${currentBooking.bookingReference || 'N/A'}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Amount Paid:</span>
+                <span class="detail-value">${currentBooking.amount} EGP</span>
+            </div>`;
+        
+        // Show success step
+        showStep('success');
+        
+        // Close modal and redirect to dashboard after 2 seconds
+        setTimeout(() => {
+            closeModal();
+            window.location.href = 'patient_dashboard.php';
+        }, 2000);
+        
+        // Remove message listener to prevent memory leaks
+        window.removeEventListener('message', handlePaymobMessage);
+    }
+
+    // Function to show a specific step
+    function showStep(step) {
+        // Hide all steps first
+        bookingStep.style.display = 'none';
+        paymentStep.style.display = 'none';
+        successStep.style.display = 'none';
+        
+        // Show the requested step
+        if (step === 'booking') {
+            bookingStep.style.display = 'block';
+        } else if (step === 'payment') {
+            // Only show payment step if there's an amount to pay
+            if (currentBooking.amount > 0) {
+                paymentStep.style.display = 'block';
+                // Load Paymob iframe when showing payment step
+                if (!paymobIframe && currentBooking.paymentToken) {
+                    loadPaymobIframe();
+                }
+            } else {
+                // If it's a free appointment, skip to success
+                showStep('success');
+            }
+        } else if (step === 'success') {
+            successStep.style.display = 'block';
+        }
+    }
+
+    // Handle payment confirmation (this would be called from the Paymob iframe callback)
+    // The actual implementation would depend on Paymob's callback mechanism
+    function onPaymentSuccess(transactionId) {
+        console.log('Payment successful, transaction ID:', transactionId);
+        completeBooking(true);
+    }
+    
+    function onPaymentFailed(error) {
+        console.error('Payment failed:', error);
+        completeBooking(false);
+    }
     </script>
 </body>
 </html>

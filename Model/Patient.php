@@ -9,6 +9,193 @@ class Patient {
         $this->db = new Database();
         $this->link = $this->db->connectToDB();
     }
+    
+    /**
+     * Get the database connection link
+     * @return mysqli Database connection
+     */
+    public function getLink() {
+        return $this->link;
+    }
+    
+    /**
+     * Send a new chat message
+     * @param int $appointmentId The ID of the appointment
+     * @param string $senderType Type of sender (patient/doctor)
+     * @param string $message The message content
+     * @return array Result of the operation
+     */
+    /**
+     * Create a new patient
+     * @param array $patientData Array containing patient information
+     * @return array Result of the operation
+     */
+    /**
+     * Find a patient by email or phone
+     * @param string $email
+     * @param string $phone
+     * @return array|false Patient data if found, false otherwise
+     */
+    public function findByEmailOrPhone($email, $phone) {
+        if (!empty($email)) {
+            $sql = "SELECT id FROM patient WHERE email = ? OR phone = ?";
+            $stmt = mysqli_prepare($this->link, $sql);
+            mysqli_stmt_bind_param($stmt, "ss", $email, $phone);
+        } else {
+            $sql = "SELECT id FROM patient WHERE phone = ?";
+            $stmt = mysqli_prepare($this->link, $sql);
+            mysqli_stmt_bind_param($stmt, "s", $phone);
+        }
+        
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        
+        return mysqli_fetch_assoc($result);
+    }
+    
+    /**
+     * Create a new patient
+     * @param array $patientData Array containing patient information
+     * @return array Result of the operation
+     */
+    public function createPatient($patientData) {
+        // Hash the password
+        $hashedPassword = password_hash($patientData['password'], PASSWORD_DEFAULT);
+        
+        // Check if email is provided
+        $hasEmail = !empty($patientData['email']);
+        
+        // Build the SQL query based on whether email is provided
+        if ($hasEmail) {
+            $sql = "INSERT INTO patient (
+                FN, LN, email, phone, password, age, idnumber, NN, 
+                address, job, gender, marital, plain_password
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            
+            $stmt = mysqli_prepare($this->link, $sql);
+            
+            // Bind parameters with email
+            mysqli_stmt_bind_param(
+                $stmt, 
+                "sssssisssssss",
+                $patientData['first_name'],
+                $patientData['last_name'],
+                $patientData['email'],
+                $patientData['phone'],
+                $hashedPassword,
+                $patientData['age'],
+                $patientData['id_number'],
+                $patientData['national_id'],
+                $patientData['address'],
+                $patientData['job'],
+                $patientData['gender'],
+                $patientData['marital_status'],
+                $patientData['password']
+            );
+        } else {
+            $sql = "INSERT INTO patient (
+                FN, LN, phone, password, age, idnumber, NN, 
+                address, job, gender, marital, plain_password
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            
+            $stmt = mysqli_prepare($this->link, $sql);
+            
+            // Bind parameters without email
+            mysqli_stmt_bind_param(
+                $stmt, 
+                "ssssisssssss",
+                $patientData['first_name'],
+                $patientData['last_name'],
+                $patientData['phone'],
+                $hashedPassword,
+                $patientData['age'],
+                $patientData['id_number'],
+                $patientData['national_id'],
+                $patientData['address'],
+                $patientData['job'],
+                $patientData['gender'],
+                $patientData['marital_status'],
+                $patientData['password']
+            );
+        }
+        
+        if (mysqli_stmt_execute($stmt)) {
+            $patientId = mysqli_insert_id($this->link);
+            if ($patientId) {
+                return [
+                    'success' => true,
+                    'patient_id' => $patientId
+                ];
+            }
+        }
+        
+        $error = mysqli_error($this->link);
+        error_log("Database error in createPatient: " . $error);
+        error_log("SQL: " . $sql);
+        error_log("Data: " . print_r($patientData, true));
+        
+        return [
+            'success' => false,
+            'error' => $error ?: 'Unknown database error'
+        ];
+    }
+    
+    public function sendChatMessage($appointmentId, $senderType, $message) {
+        $sql = "INSERT INTO chat_messages (appointment_id, sender_type, message) VALUES (?, ?, ?)";
+        $stmt = mysqli_prepare($this->link, $sql);
+        mysqli_stmt_bind_param($stmt, "iss", $appointmentId, $senderType, $message);
+        
+        if (mysqli_stmt_execute($stmt)) {
+            return [
+                'success' => true,
+                'message_id' => mysqli_insert_id($this->link)
+            ];
+        }
+        return ['success' => false, 'error' => mysqli_error($this->link)];
+    }
+
+    /**
+     * Get chat history for an appointment
+     * @param int $appointmentId The ID of the appointment
+     * @return array Array of chat messages
+     */
+    public function getChatHistory($appointmentId) {
+        $sql = "SELECT * FROM chat_messages 
+                WHERE appointment_id = ? 
+                ORDER BY created_at ASC";
+        
+        $stmt = mysqli_prepare($this->link, $sql);
+        mysqli_stmt_bind_param($stmt, "i", $appointmentId);
+        mysqli_stmt_execute($stmt);
+        
+        $result = mysqli_stmt_get_result($stmt);
+        $messages = [];
+        
+        while ($row = mysqli_fetch_assoc($result)) {
+            $messages[] = $row;
+        }
+        
+        return $messages;
+    }
+
+    /**
+     * Check for new messages
+     * @param int $appointmentId The ID of the appointment
+     * @param int $lastSeenMessageId The ID of the last seen message
+     * @return int Number of unread messages
+     */
+    public function getUnreadMessageCount($appointmentId, $lastSeenMessageId) {
+        $sql = "SELECT COUNT(*) as unread_count 
+                FROM chat_messages 
+                WHERE appointment_id = ? AND id > ?";
+        
+        $stmt = mysqli_prepare($this->link, $sql);
+        mysqli_stmt_bind_param($stmt, "ii", $appointmentId, $lastSeenMessageId);
+        mysqli_stmt_execute($stmt);
+        
+        $result = mysqli_stmt_get_result($stmt);
+        return mysqli_fetch_assoc($result)['unread_count'] ?? 0;
+    }
  
     public function register($FN, $LN, $email, $phone, $password, $plain_password, $age, $idnumber, $NN, $address, $job, $gender, $marital) {
         // Hash the password
@@ -106,6 +293,160 @@ class Patient {
             mysqli_stmt_close($stmt);
         }
         return false;
+    }
+    
+    /**
+     * Get all appointments for a specific patient
+     * @param int $patientId The ID of the patient
+     * @param string $status Optional status filter (e.g., 'upcoming', 'completed', 'cancelled')
+     * @param int $limit Optional limit for number of appointments to return
+     * @return array Array of appointments
+     */
+    /**
+     * Cancel an appointment
+     * @param int $appointmentId The ID of the appointment to cancel
+     * @param int $patientId The ID of the patient (for security)
+     * @return bool True on success, false on failure
+     */
+    public function cancelAppointment($appointmentId, $patientId) {
+        $sql = "UPDATE appointment SET status = 'cancelled' WHERE id = ? AND patient_id = ?";
+        
+        if ($stmt = mysqli_prepare($this->link, $sql)) {
+            mysqli_stmt_bind_param($stmt, "ii", $appointmentId, $patientId);
+            
+            $result = mysqli_stmt_execute($stmt);
+            $affectedRows = mysqli_stmt_affected_rows($stmt);
+            mysqli_stmt_close($stmt);
+            
+            return $result && $affectedRows > 0;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Get all appointments for a specific patient
+     * @param int $patientId The ID of the patient
+     * @param string $status Optional status filter (e.g., 'upcoming', 'completed', 'cancelled')
+     * @param int $limit Optional limit for number of appointments to return
+     * @return array Array of appointments
+     */
+    /**
+     * Get a single appointment by ID with security check
+     * @param int $appointmentId The ID of the appointment
+     * @return array|null Appointment data or null if not found
+     */
+    public function getAppointmentById($appointmentId) {
+        $sql = "SELECT a.*, 
+                       d.FN as doctor_first_name, d.LN as doctor_last_name,
+                       d.specialty as doctor_specialty
+                FROM appointment a
+                LEFT JOIN doctor d ON a.doctor_id = d.id
+                WHERE a.id = ?";
+        
+        if ($stmt = mysqli_prepare($this->link, $sql)) {
+            mysqli_stmt_bind_param($stmt, "i", $appointmentId);
+            
+            if (mysqli_stmt_execute($stmt)) {
+                $result = mysqli_stmt_get_result($stmt);
+                if ($row = mysqli_fetch_assoc($result)) {
+                    mysqli_stmt_close($stmt);
+                    return $row;
+                }
+            } else {
+                error_log("Error fetching appointment: " . mysqli_error($this->link));
+            }
+            
+            mysqli_stmt_close($stmt);
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Delete an appointment
+     * @param int $appointmentId The ID of the appointment to delete
+     * @param int $patientId The ID of the patient (for security)
+     * @return bool True on success, false on failure
+     */
+    public function deleteAppointment($appointmentId, $patientId) {
+        // First verify the appointment exists and belongs to the patient
+        $appointment = $this->getAppointmentById($appointmentId);
+        
+        if (!$appointment || $appointment['patient_id'] != $patientId) {
+            return false;
+        }
+        
+        // Only allow deleting completed appointments
+        if (strtolower($appointment['status']) !== 'completed') {
+            return false;
+        }
+        
+        $sql = "DELETE FROM appointment WHERE id = ? AND patient_id = ?";
+        
+        if ($stmt = mysqli_prepare($this->link, $sql)) {
+            mysqli_stmt_bind_param($stmt, "ii", $appointmentId, $patientId);
+            
+            $result = mysqli_stmt_execute($stmt);
+            $affectedRows = mysqli_stmt_affected_rows($stmt);
+            mysqli_stmt_close($stmt);
+            
+            return $result && $affectedRows > 0;
+        }
+        
+        return false;
+    }
+    
+    public function getAppointments($patientId, $status = null, $limit = null) {
+        $sql = "SELECT a.*, 
+                       d.FN as doctor_first_name, d.LN as doctor_last_name,
+                       d.specialty as doctor_specialty
+                FROM appointment a
+                LEFT JOIN doctor d ON a.doctor_id = d.id
+                WHERE a.patient_id = ?";
+        
+        $params = [];
+        $types = 'i';
+        $params[] = $patientId;
+        
+        // Add status filter if provided
+        if ($status !== null) {
+            $sql .= " AND a.status = ?";
+            $types .= 's';
+            $params[] = $status;
+        }
+        
+        // Add ordering by appointment time (newest first)
+        $sql .= " ORDER BY a.appointment_time DESC";
+        
+        // Add limit if provided
+        if ($limit !== null) {
+            $sql .= " LIMIT ?";
+            $types .= 'i';
+            $params[] = (int)$limit;
+        }
+        
+        $appointments = [];
+        
+        if ($stmt = mysqli_prepare($this->link, $sql)) {
+            // Bind parameters
+            if (count($params) > 0) {
+                mysqli_stmt_bind_param($stmt, $types, ...$params);
+            }
+            
+            if (mysqli_stmt_execute($stmt)) {
+                $result = mysqli_stmt_get_result($stmt);
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $appointments[] = $row;
+                }
+            } else {
+                error_log("Error fetching appointments: " . mysqli_error($this->link));
+            }
+            
+            mysqli_stmt_close($stmt);
+        }
+        
+        return $appointments;
     }
     
     public function login($number, $password) {

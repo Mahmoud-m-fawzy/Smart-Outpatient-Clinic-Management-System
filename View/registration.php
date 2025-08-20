@@ -14,9 +14,111 @@ if (session_status() === PHP_SESSION_NONE) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registration</title>
-    <link rel="stylesheet" href="css\Registration.css">
+    <link rel="stylesheet" href="css/Registration.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/voice-input.css">
     <style>
+        /* Toggle Switch Styles */
+        .reg-header {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
+        }
+        
+        .reg-sub {
+            margin-top: 5px;
+        }
+        
+        .switch-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        
+        .switch {
+            --circle-dim: 1.4em;
+            font-size: 17px;
+            position: relative;
+            display: inline-block;
+            width: 3.5em;
+            height: 2em;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #f5aeae;
+            transition: .4s;
+            border-radius: 30px;
+        }
+
+        .slider-card {
+            position: absolute;
+            content: "";
+            height: var(--circle-dim);
+            width: var(--circle-dim);
+            border-radius: 20px;
+            left: 0.3em;
+            bottom: 0.3em;
+            transition: .4s;
+            pointer-events: none;
+        }
+
+        .slider-card-face {
+            position: absolute;
+            inset: 0;
+            backface-visibility: hidden;
+            perspective: 1000px;
+            border-radius: 50%;
+            transition: .4s transform;
+        }
+
+        .slider-card-front {
+            background-color: #DC3535;
+        }
+
+        .slider-card-back {
+            background-color: #379237;
+            transform: rotateY(180deg);
+        }
+
+        input:checked ~ .slider-card .slider-card-back {
+            transform: rotateY(0);
+        }
+
+        input:checked ~ .slider-card .slider-card-front {
+            transform: rotateY(-180deg);
+        }
+
+        input:checked ~ .slider-card {
+            transform: translateX(1.5em);
+        }
+
+        input:checked ~ .slider {
+            background-color: #9ed99c;
+        }
+        
+        .voice-label {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+        }
+        
         .error {
             background-color: #ffcccc; /* Light red background */
         }
@@ -62,6 +164,17 @@ if (session_status() === PHP_SESSION_NONE) {
                 <div class="reg-header">
                     <h2>Registration</h2>
                     <div class="reg-sub">Wishing you good health.</div>
+                    <div class="switch-container">
+                        <span class="voice-label">Fill in voice</span>
+                        <label class="switch">
+                            <input type="checkbox" id="voiceToggle" >
+                            <div class="slider"></div>
+                            <div class="slider-card">
+                                <div class="slider-card-face slider-card-front"></div>
+                                <div class="slider-card-face slider-card-back"></div>
+                            </div>
+                        </label>
+                    </div>
                 </div>
             </div>
 
@@ -211,6 +324,7 @@ if (session_status() === PHP_SESSION_NONE) {
             </form>
         </div>
     </div>
+
     <footer class="main-footer">
     <div class="footer-main">
         <div class="footer-col about">
@@ -268,8 +382,9 @@ if (session_status() === PHP_SESSION_NONE) {
         </div>
     </div>
     <div class="footer-bottom">
-        <span>All rights reserved for Faculty of Physical Therapy at MSA University ©2025</span>
+        <span>All rights reserved for Faculty of Physical Therapy at MSA University 2025</span>
     </div>
     <script src="js/validation.js"></script>
+    <script src="js/voice-input.js"></script>
 </body>
 </html>

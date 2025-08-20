@@ -1,0 +1,164 @@
+/* Voice Instruction Box */
+.voice-instruction-box {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    width: 250px;
+    background: #ffffff;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    overflow: hidden;
+    direction: rtl;
+    animation: slideIn 0.3s ease-out;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.voice-instruction-header {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    background: #f5f5f5;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.voice-instruction-header h3 {
+    margin: 0;
+    font-size: 16px;
+    color: #333;
+    flex-grow: 1;
+    text-align: right;
+    padding-right: 10px;
+}
+
+.close-instruction {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #6c757d;
+    padding: 0 5px;
+}
+
+.close-instruction:hover {
+    color: #dc3545;
+}
+
+.voice-instruction-content {
+    padding: 12px 15px;
+    color: #333;
+}
+
+.voice-instruction-content ol {
+    padding-right: 20px;
+    margin: 0 0 15px 0;
+}
+
+.voice-instruction-content li {
+    margin-bottom: 8px;
+}
+
+.voice-note {
+    margin-top: 8px;
+    padding: 8px 10px;
+    background: #f0f8ff;
+    border-right: 2px solid #4a90e2;
+    border-radius: 3px;
+    font-size: 12px;
+    color: #2c3e50;
+}
+
+
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Toggle Switch */
+.switch-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transition: .4s;
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #28a745;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #28a745;
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .voice-instruction-box {
+        width: 90%;
+        left: 5%;
+        right: 5%;
+        top: 70px;
+    }
+    
+    .switch-container {
+        position: relative;
+        top: 0;
+        right: 0;
+        justify-content: flex-end;
+        margin: 10px 0;
+    }
+}
